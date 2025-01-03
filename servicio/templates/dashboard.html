@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row py-4">
+        <!-- Tarjetas de información -->
+        <div class="col-md-4">
+            <div class="card bg-card mb-3">
+                <div class="card-header">Usuarios</div>
+                <div class="card-body">
+                    <h5 class="card-title">120</h5>
+                    <p class="card-text">Usuarios registrados en la plataforma.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-card mb-3">
+                <div class="card-header">Proyectos</div>
+                <div class="card-body">
+                    <h5 class="card-title">45</h5>
+                    <p class="card-text">Proyectos activos actualmente.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-card mb-3">
+                <div class="card-header">Pendientes</div>
+                <div class="card-body">
+                    <h5 class="card-title">10</h5>
+                    <p class="card-text">Tareas pendientes por completar.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Tabla de datos -->
+        <div class="col">
+            <div class="card">
+                <div class="card-header">Últimas actividades</div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Actividad</th>
+                                <th>Usuario</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Revisión de proyecto</td>
+                                <td>Juan Pérez</td>
+                                <td><span class="badge bg-success">Completado</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Subida de documentación</td>
+                                <td>María Gómez</td>
+                                <td><span class="badge bg-warning">Pendiente</span></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Revisión de cambios</td>
+                                <td>Carlos López</td>
+                                <td><span class="badge bg-danger">Rechazado</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

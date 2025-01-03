@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Protest+Strike&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Acme&family=Lobster&family=Pacifico&family=Protest+Strike&display=swap');
+
+.title{
+    font-family: "Acme", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 40px;
+}
+.subtitle{
+    font-family: "Acme", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+}
+.text{
+    font-family: "Acme", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.bg-color{
+    background-color: #a23002;
+}
+.bg-card{
+    border-radius: 14px;
+    border: 1px solid #c4c4c400;
+    border-radius: 14px;
+    background: #e5e2e1;
+    box-shadow: inset 16px 16px 20px #d0cecd,
+            inset -16px -16px 20px #faf6f5;
+}
+
+.cont-pange{
+    border-radius: 27px;
+    background: #e5e2e1;
+    box-shadow: inset 16px 16px 20px #d0cecd,
+            inset -16px -16px 20px #faf6f5;
+}
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background: #e5e2e1;
+}
+
+.modal-bg{
+    background: #e5e2e1;
+}
+/* Estilo cuando el sidebar está oculto */
+.navbar-expanded {
+    margin-left: 0 !important;
+    width: 100% !important;
+    transition: margin-left 0.3s, width 0.3s;
+}
+
+.content-expanded {
+    margin-left: 0 !important;
+    width: 100% !important;
+    transition: margin-left 0.3s, width 0.3s;
+}
+
+/* Estilo cuando el sidebar está visible */
+.navbar-collapsed {
+    margin-left: 250px !important; /* Ajusta según el ancho del sidebar */
+    transition: margin-left 0.3s, width 0.3s;
+}
+
+.content-collapsed {
+    margin-left: 250px !important; /* Ajusta según el ancho del sidebar */
+    transition: margin-left 0.3s, width 0.3s;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    height: 100vh;
+
+    color: white;
+    position: fixed;
+    transition: all 0.3s ease-in-out; 
+}
+#sidebar .nav-link{
+    color: white;
+    text-decoration: none;
+    background: #a23002;
+    box-shadow: inset 20px 20px 35px #702101,
+            inset -20px -20px 35px #d43f03;
+    border-radius: 40px;
+}
+
+
+
+#sidebar .nav-link:hover {
+    border-radius: 40px;
+    background: #140701f6;
+}
+
+
+#sidebar.hidden {
+    margin-left: -250px;
+    transition: all 0.3s ease-in-out;
+}
+
+#content {
+    margin-left: 250px;
+    padding: 20px;
+    flex-grow: 1;
+}
+.navbar {
+    margin-left: 250px;
+    position: fixed;
+    width: calc(100% - 250px);
+    z-index: 1000;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.user-info img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+

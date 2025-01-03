@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Title</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <!-- Bootstrap CSS v5.2.1 -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+
+    <body>
+        <div class="container pt-4">
+            <h1>Registro de Venta  </h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-6">
+                        <h3>Datos Principales</h3>
+                        {{ form.as_p }}
+                        <input type="hidden" name="cliente_id" id="cliente_id" value="">
+                        <div class="mb-3">
+                            <label for="saldo_pendiente">Saldo Pendiente:</label>
+                            <input type="text" id="saldo_pendiente" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="herramientas_prestadas">Herramientas Prestadas:</label>
+                            <input type="number" id="herramientas_prestadas" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h3>Selecciona los productos</h3>
+                        <div class="col-6">
+                            <label for="producto">Producto:</label>
+                            <select id="producto" name="producto" class="form-control">
+                                <option value="">Seleccione un producto</option>
+                                {% for inventario in inventarios %}
+                                <option value="{{ inventario.id }}" data-precio="{{ inventario.precio }}">
+                                    {{ inventario.producto.nombre }} - {{ inventario.precio }} Bs
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label for="cantidad">Cantidad:</label>
+                            <input type="number" id="cantidad" name="cantidad" class="form-control" min="1" value="1" />
+                        </div>
+                        <input type="hidden" name="subtotal" id="subtotal">
+                        <button type="button" id="agregar-producto" class="btn btn-primary">Agregar Producto</button>
+                        <h3>Productos seleccionados:</h3>
+                        <ul id="lista-productos" class="list-group"></ul>
+                        <input type="hidden" name="cantidades" id="cantidades">
+                        <h3>Total: <span id="total">0</span> Bs</h3>
+                        <h3>Subtotal: <span id="subtotal-display">0</span> Bs</h3>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Realizar venta</button>
+                <a href="" class="btn btn-danger">Cancelar Venta</a>
+            </form>
+        </div>
+
+        <script>
+            document.getElementById('id_cliente').addEventListener('change', function () {
+                const clienteId = this.value;
+
+                if (clienteId) {
+                    fetch(`/obtener-datos-cliente/?cliente_id=${clienteId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.error) {
+                                document.getElementById('saldo_pendiente').value = data.saldo_pendiente;
+                                document.getElementById('herramientas_prestadas').value = data.herramientas_prestadas;
+                            } else {
+                                alert(data.error);
+                            }
+                        })
+                        .catch(error => console.error('Error al obtener datos del cliente:', error));
+                } else {
+                    document.getElementById('saldo_pendiente').value = '';
+                    document.getElementById('herramientas_prestadas').value = '';
+                }
+            });
+
+            document.getElementById('agregar-producto').addEventListener('click', function() {
+                var productoSelect = document.getElementById('producto');
+                var cantidadInput = document.getElementById('cantidad');
+                
+                var productoId = productoSelect.value;
+                var cantidad = cantidadInput.value;
+                var precio = productoSelect.options[productoSelect.selectedIndex].getAttribute('data-precio');
+                var productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
+        
+                if (productoId && cantidad > 0) {
+                    var listaProductos = document.getElementById('lista-productos');
+                    var li = document.createElement('li');
+                    li.classList.add('list-group-item');
+                    li.innerHTML = `${productoNombre} - Cantidad: ${cantidad} - Precio: ${precio} Bs - Total: ${precio * cantidad} Bs
+                        <button type="button" class="btn btn-danger btn-sm float-end" onclick="eliminarProducto(this)">Eliminar</button>`;
+                    
+                    listaProductos.appendChild(li);
+        
+                    actualizarTotal();
+        
+                    productoSelect.value = '';
+                    cantidadInput.value = 1;
+                } else {
+                    alert('Por favor selecciona un producto y cantidad válida');
+                }
+            });
+        
+            function eliminarProducto(button) {
+                var li = button.parentNode;
+                li.remove();
+                
+                actualizarTotal();
+            }
+        
+            function actualizarTotal() {
+                var total = 0;
+                var listaProductos = document.getElementById('lista-productos');
+              
+                var productos = listaProductos.getElementsByTagName('li');
+                for (var i = 0; i < productos.length; i++) {
+                    var textoTotal = productos[i].innerHTML;
+                    var totalProducto = parseFloat(textoTotal.split('Total: ')[1].split(' Bs')[0]);
+                    total += totalProducto;
+                }
+
+                var saldoPendiente = parseFloat(document.getElementById('saldo_pendiente').value) || 0;
+
+                var subtotal = total + saldoPendiente;
+
+                document.getElementById('total').textContent = total.toFixed(2);
+
+                document.getElementById('subtotal').value = subtotal.toFixed(2);
+
+               
+                document.getElementById('subtotal-display').textContent = subtotal.toFixed(2);
+
+                var cantidades = [];
+                for (var i = 0; i < productos.length; i++) {
+                    var cantidad = productos[i].innerHTML.split('Cantidad: ')[1].split(' -')[0];
+                    cantidades.push(cantidad);
+                }
+                document.getElementById('cantidades').value = cantidades.join(',');
+            }
+        </script>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"
+        ></script>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>{% if form.instance.pk %}Editar{% else %}Añadir{% endif %} Gasto Diario</h1>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

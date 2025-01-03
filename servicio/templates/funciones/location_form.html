@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<br>
+<div class="text container-fluid p-5 cont-pange">
+    <h1>{{ object|default:"Crear Locación" }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit">Guardar</button>
+    </form>
+</div>
+{% endblock %}

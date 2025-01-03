@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %} 
+<form method="post">
+    {% csrf_token %}
+    <h3>Registro de Venta</h3>
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.cliente|as_crispy_field }}
+        </div>
+        <div class="col-md-6">
+            {{ form.empleado|as_crispy_field }}
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="productos">Selecciona los productos:</label>
+                <div class="d-flex flex-wrap">  <!-- Usamos d-flex para hacer el contenedor un Flexbox -->
+                    {% for group_name, group_products in form.productos.field.widget.choices %}
+                        <div class="w-100 mb-3">  <!-- Cada tipo de producto en su propia fila -->
+                            <h5>{{ group_name }}</h5>
+                            <div class="d-flex flex-wrap">  <!-- Usamos flex-wrap para envolver los productos cuando no hay suficiente espacio -->
+                                {% for product_id, product_description in group_products %}
+                                    <div class="btn-group me-2 mb-2"> <!-- btn-group para agrupar checkbox y label -->
+                                        <input type="checkbox" class="btn-check" id="product-{{ product_id }}" autocomplete="off" name="productos" value="{{ product_id }}">
+                                        <label class="btn btn-outline-secondary" for="product-{{ product_id }}">{{ product_description }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            {{ form.anticipo|as_crispy_field }}
+        </div>
+    </div>
+
+    <h3>Detalles de Venta</h3>
+    {{ formset.management_form }}
+    <table class="table table-bordered" id="detalle-venta-table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody id="detalle-lista">
+            <!-- Los detalles existentes se renderizan aquí -->
+            {% for form in formset %}
+            <tr class="form-row">
+                <td>{{ form.producto }}</td>
+                <td>{{ form.cantidad }}</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Fila para agregar nuevos productos -->
+    <div class="row" id="nuevo-detalle">
+        <div class="col-md-6">
+            <label for="id_producto">Producto</label>
+            <select class="form-control" id="id_producto">
+                {% for producto in productos %}
+                <option value="{{ producto.id }}">{{ producto.tipo_producto.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="id_cantidad">Cantidad</label>
+            <input type="number" id="id_cantidad" class="form-control" min="1">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="button" id="add-row" class="btn btn-primary">Agregar Producto</button>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Guardar Venta</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tableBody = document.querySelector('#detalle-lista');
+        const addRowButton = document.getElementById('add-row');
+        const productoSelect = document.getElementById('id_producto');
+        const cantidadInput = document.getElementById('id_cantidad');
+        const totalForms = document.querySelector('#id_form-TOTAL_FORMS');
+
+        addRowButton.addEventListener('click', function () {
+            const productoId = productoSelect.value;
+            const productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
+            const cantidad = cantidadInput.value;
+
+            if (!productoId || !cantidad || cantidad <= 0) {
+                alert('Selecciona un producto y una cantidad válida.');
+                return;
+            }
+
+            // Índice actual del formset
+            const formCount = parseInt(totalForms.value, 10);
+
+            // Nueva fila para el detalle
+            const newRow = document.createElement('tr');
+            newRow.classList.add('form-row');
+            newRow.innerHTML = `
+                <td>
+                    <input type="hidden" name="form-${formCount}-producto" value="${productoId}">
+                    ${productoNombre}
+                </td>
+                <td>
+                    <input type="number" name="form-${formCount}-cantidad" value="${cantidad}" class="form-control" readonly>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+
+            // Incrementar el número total de formularios
+            totalForms.value = formCount + 1;
+
+            // Limpiar los campos
+            productoSelect.value = '';
+            cantidadInput.value = '';
+        });
+
+        tableBody.addEventListener('click', function (event) {
+            if (event.target.classList.contains('remove-row')) {
+                const row = event.target.closest('tr');
+                row.remove();
+
+                // Actualiza el número total de formularios
+                const updatedFormCount = document.querySelectorAll('.form-row').length;
+                totalForms.value = updatedFormCount;
+            }
+        });
+    });
+</script>
+{% endblock %}
+

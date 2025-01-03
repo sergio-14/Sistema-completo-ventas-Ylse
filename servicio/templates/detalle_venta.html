@@ -1,0 +1,63 @@
+<div class=" text container-fluid px-5 py-2 cont-pange">
+
+    <p class="title text-end"><strong>Detalle para:</strong> {{ venta.cliente }}</p>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Empleado:</strong> {{ venta.empleado }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Saldo Pendiente:</strong> {{ venta.saldo_pendiente }} Bs.</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Anticipo:</strong> {{ venta.anticipo }} Bs.</p>
+        </div>
+        
+    </div>    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Tipo Producto</th>
+                <th>Estado</th>
+                <th>Precio Unitario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in venta.productos.all %}
+            <tr>
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.tipo_producto.nombre }}</td>
+                <td>{{ producto.estado }}</td>
+                <td>{{ producto.precio }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in detalles %}
+            <tr>
+                <td>{{ detalle.producto.tipo_producto.nombre }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>{{ detalle.producto.precio }}</td>
+                <td>{{ detalle.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="subtitle text-end py-2"><strong>Total:</strong> {{ venta.total }} Bs.</p>
+    
+</div>
+

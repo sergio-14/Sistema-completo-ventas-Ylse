@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<br>
+<article class="container-fluid p-5 cont-pange">    
+    <h2>Editar Usuario</h2>
+<h2>Editar Usuario: {{ user.nombre }} {{ user.apellido }}</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="mb-3 col-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label"></label>
+            {{ form.email|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.email.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Nombre -->
+        <div class="mb-3 col-3">
+            <label for="{{ form.nombre.id_for_label }}" class="form-label"></label>
+            {{ form.nombre|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.nombre.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.nombre.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Apellido -->
+        <div class="mb-3 col-3">
+            <label for="{{ form.apellido.id_for_label }}" class="form-label"></label>
+            {{ form.apellido|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.apellido.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.apellido.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Apellido Materno -->
+        <div class="mb-3 col-3">
+            <label for="{{ form.apellidoM.id_for_label }}" class="form-label"></label>
+            {{ form.apellidoM|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.apellidoM.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.apellidoM.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Imagen -->
+        <div class="mb-3 col-12">
+            <label for="{{ form.imagen.id_for_label }}" class="form-label"></label>
+            {{ form.imagen|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.imagen.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.imagen.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- DNI -->
+        <div class="mb-3 col-md-6">
+            <label for="{{ form.dni.id_for_label }}" class="form-label"></label>
+            {{ form.dni|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.dni.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.dni.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Fecha de Nacimiento -->
+        <div class="mb-3 col-md-6">
+            <label for="{{ form.fecha_nac.id_for_label }}" class="form-label"></label>
+            {{ form.fecha_nac|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.fecha_nac.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.fecha_nac.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Estado Activo -->
+        <div class="mb-3 col-md-4">
+            <label for="{{ form.is_active.id_for_label }}" class="form-label"></label>
+            {{ form.is_active|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.is_active.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.is_active.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Estado Staff -->
+        <div class="mb-3 col-md-4">
+            <label for="{{ form.is_staff.id_for_label }}" class="form-label"></label>
+            {{ form.is_staff|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.is_staff.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.is_staff.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Superusuario -->
+        <div class="mb-3 col-md-4">
+            <label for="{{ form.is_superuser.id_for_label }}" class="form-label"></label>
+            {{ form.is_superuser|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.is_superuser.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.is_superuser.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- Grupos -->
+        <div class="mb-3 col-md-12">
+            <label for="{{ form.groups.id_for_label }}" class="form-label"></label>
+            {{ form.groups|as_crispy_field }} <!-- Usando as_crispy_field -->
+            {% if form.groups.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.groups.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    
+    </div>
+    <!-- Botón de Enviar -->
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>
+
+</article>
+{% endblock %}

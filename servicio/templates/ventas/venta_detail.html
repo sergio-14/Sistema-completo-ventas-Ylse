@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+{% block content %}
+<br>
+
+<div class=" text container-fluid p-5 cont-pange">
+    <form method="post">
+        {% csrf_token %}
+        <h3>Registro de Venta</h3>
+        {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+        <div class="row">
+            <!-- Campo cliente -->
+            <div class="col-md-7">
+                {{ form.cliente|as_crispy_field }}
+                {{ form.empleado|as_crispy_field }}
+
+                <div class="row" id="nuevo-detalle">
+                    <div class="col-md-6">
+                        <label for="id_producto">Producto</label>
+                        <select class="form-control" id="id_producto">
+                            {% for producto in productos %}
+                            <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">
+                                {{ producto.tipo_producto.nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="id_cantidad">Cantidad</label>
+                        <input type="number" id="id_cantidad" class="form-control" min="1">
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-end align-items-end">
+                        <button type="button" id="add-row" class="btn btn-sm btn-outline-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-plus-fill mb-2" viewBox="0 0 16 16">
+                                <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0"/>
+                            </svg>
+                            Agregar Pedido
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    {% for tipo in tipos_con_productos %}
+                        <div class="col-md-12">
+                            <h5 class="mt-3">{{ tipo.nombre }}</h5>
+                            <div class="btn-toolbar gap-1">
+                                {% for producto in tipo.productoretornable_set.all %}
+                                    <input type="checkbox" 
+                                           class="btn-check" 
+                                           id="product-{{ producto.id }}" 
+                                           data-product-id="{{ producto.id }}" 
+                                           data-product-price="{{ producto.precio }}" 
+                                           autocomplete="off">
+                                    <label class="btn btn-outline-secondary btn-sm" for="product-{{ producto.id }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill mb-1" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                        {{ producto.descripcion }} - {{ producto.precio }}Bs.
+                                    </label><br>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            
+                <div class="row mt-3">
+                    <!-- Campo anticipo -->
+                    <div class="col-md-6">
+                        {{ form.anticipo|as_crispy_field }}
+                    </div>
+                    {% comment %} <div class="row mt-3">
+                        
+                        <div class="col-md-6">
+                            <!-- Mostrar el saldo pendiente como texto -->
+                            <span class="form-control-plaintext">{{ form.saldo_pendiente.value }}</span>
+                        </div>
+                    </div> {% endcomment %}
+                </div>
+            </div>
+    
+            <!-- Campo empleado -->
+            <div class="col-md-5">
+                <h3>Detalles de Venta</h3>
+        {{ formset.management_form }}
+        <table class="table table-striped" id="detalle-venta-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="detalle-lista">
+                <!-- Los detalles existentes se renderizan aquí -->
+                {% for form in formset %}
+                <tr>
+                    <td>{{ form.producto }}</td>
+                    <td></td>
+                    <td>{{ detalle_form.producto.instance.precio|floatformat:2 }}</td> 
+                    <td>{{ detalle_form.cleaned_data.subtotal|floatformat:2 }}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td class="text-end" ><strong>Total:</strong></td>
+                    <p>Total: <span id="total">0.00</span> Bs.</p>
+                    
+                </tr>
+            </tfoot>
+        </table>
+            </div>
+        </div>
+    
+        
+        <!-- Fila para agregar nuevos productos -->
+        
+    
+        <button type="submit" class="btn btn-success mt-3">Guardar Venta</button>
+    </form>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectedProducts = new Set();
+        
+            document.querySelectorAll('.product-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = this.dataset.productId;
+                    if (selectedProducts.has(productId)) {
+                        // Desmarcar producto
+                        selectedProducts.delete(productId);
+                        this.classList.remove('selected');
+                    } else {
+                        // Marcar producto
+                        selectedProducts.add(productId);
+                        this.classList.add('selected');
+                    }
+        
+                    console.log(Array.from(selectedProducts)); // Productos seleccionados
+                });
+            });
+        });
+
+
+        
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.btn-check');  // Seleccionamos los checkboxes
+            const totalElement = document.getElementById('total'); // Total de la venta
+            let total = 0;
+    
+            // Función para calcular el total
+            function updateTotal() {
+                total = 0;
+    
+                // Iteramos sobre los checkboxes seleccionados
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const productoId = checkbox.getAttribute('data-product-id');
+                        const productoPrecio = parseFloat(checkbox.getAttribute('data-product-price')); // Asegúrate de que estos datos estén en el HTML
+                        total += productoPrecio;  // Sumar el precio del producto seleccionado
+                    }
+                });
+    
+                // Actualizamos el total en la página
+                totalElement.textContent = total.toFixed(2);  // Muestra el total con dos decimales
+            }
+    
+            // Escuchamos el cambio en los checkboxes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateTotal);
+            });
+    
+            // Llamamos a la función de actualización al cargar la página
+            updateTotal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const tableBody = document.querySelector('#detalle-lista');
+            const totalElement = document.getElementById('total');
+            const addRowButton = document.getElementById('add-row');
+            const productoSelect = document.getElementById('id_producto');
+            const cantidadInput = document.getElementById('id_cantidad');
+            const totalForms = document.querySelector('#id_form-TOTAL_FORMS');
+            
+            function calculateTotal() {
+                let total = 0;
+        
+                // Sumar los productos seleccionados
+                document.querySelectorAll('.btn-check:checked').forEach(checkbox => {
+                    total += parseFloat(checkbox.getAttribute('data-product-price')); // Sumar el precio de cada producto
+                });
+        
+                // Sumar los productos de la tabla
+                tableBody.querySelectorAll('.form-row').forEach(row => {
+                    const price = parseFloat(row.dataset.price || 0); // Precio desde data-price
+                    const quantity = parseInt(row.querySelector('input[name$="-cantidad"]').value || 0, 10); // Cantidad del input
+                    const subtotal = price * quantity;
+                    total += subtotal;
+                    row.querySelector('.subtotal').textContent = subtotal.toFixed(2); // Actualiza el subtotal
+                });
+        
+                totalElement.textContent = total.toFixed(2); // Muestra el total
+            }
+        
+            addRowButton.addEventListener('click', function () {
+                const productoId = productoSelect.value;
+                const productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
+                const precio = parseFloat(productoSelect.options[productoSelect.selectedIndex].dataset.precio || 0);
+                const cantidad = parseInt(cantidadInput.value, 10);
+        
+                if (!productoId || !cantidad || cantidad <= 0) {
+                    alert('Selecciona un producto y una cantidad válida.');
+                    return;
+                }
+        
+                const formCount = parseInt(totalForms.value, 10);
+                const newRow = document.createElement('tr');
+                newRow.classList.add('form-row');
+                newRow.dataset.price = precio;
+                newRow.innerHTML = `
+                    <td>
+                        <input type="hidden" name="form-${formCount}-producto" value="${productoId}">
+                        ${productoNombre}
+                    </td>
+                    <td>
+                        <input type="number" name="form-${formCount}-cantidad" value="${cantidad}" class="form-control" style="width: 60px;" readonly>
+                    </td>
+                    <td>${precio.toFixed(2)}</td>
+                    <td class="subtotal">Total:${(precio * cantidad).toFixed(2)}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
+                    </td>
+                `;
+                tableBody.appendChild(newRow);
+                totalForms.value = formCount + 1;
+                calculateTotal();
+                productoSelect.value = '';
+                cantidadInput.value = '';
+            });
+        
+            tableBody.addEventListener('click', function (event) {
+                if (event.target.classList.contains('remove-row')) {
+                    const row = event.target.closest('tr');
+                    row.remove();
+                    totalForms.value = document.querySelectorAll('.form-row').length;
+                    calculateTotal();
+                }
+            });
+        
+            // Inicializa el cálculo del total al cargar la página
+            calculateTotal();
+        });
+    </script>
+    
+</div>
+{% endblock %}

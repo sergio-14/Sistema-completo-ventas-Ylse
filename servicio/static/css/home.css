@@ -1,0 +1,909 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Protest+Strike&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Acme&family=Lobster&family=Pacifico&family=Protest+Strike&display=swap');
+
+.switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #021b253d;
+  transition: .4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.4em;
+  width: 1.4em;
+  border-radius: 20px;
+  left: 0.3em;
+  bottom: 0.3em;
+  background-color: #021b253d;
+  box-shadow: inset 2px -2px 0 1.8px #fff;
+  transition: .4s;
+  animation: anima1 0.3s linear;
+}
+
+@keyframes anima1 {
+  0% {
+    transform: translateX(1.5em);
+  }
+
+  80% {
+    transform: translateX(-0.3em);
+  }
+
+  100% {
+    transform: translateX(0em);
+  }
+}
+
+.switch input:checked + .slider:before {
+  background-color: yellow;
+  box-shadow: none;
+  transform: translateX(1.5em);
+  animation: anima 0.3s linear;
+}
+
+@keyframes anima {
+  0% {
+    transform: translateX(0px)
+  }
+
+  80% {
+    transform: translateX(1.6em)
+  }
+
+  100% {
+    transform: translateX(1.4em)
+  }
+}
+
+
+.pacifico-regular {
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+.acme-regular {
+  font-family: "Acme", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.flecha2 {
+  position: absolute; /* Permite posicionarla relativa a su contenedor */
+  top: -100px; /* Posiciona en la parte superior */
+  left: -50px; /* Posiciona en la parte izquierda */
+  z-index: 9999; /* Asegura que esté delante de todo */
+  transform: rotate(2deg); /* Rota la imagen 14 grados */
+  width: 150px; /* Ajusta el tamaño según sea necesario */
+}
+
+.contenprod{
+  position: relative;
+}
+.flecha1 {
+  position: absolute; /* Permite posicionarla relativa a su contenedor */
+  bottom: 0px; /* Posiciona en la parte superior */
+  right: -150px; /* Posiciona en la parte izquierda */
+  z-index: 9999; /* Asegura que esté delante de todo */
+  transform: rotate(-82deg); /* Rota la imagen 14 grados */
+  width: 250px; /* Ajusta el tamaño según sea necesario */
+}
+
+.espiga {
+  position: absolute; /* Permite posicionarla relativa a su contenedor */
+  bottom: -180px; /* Posiciona en la parte superior */
+  right: -60px; /* Posiciona en la parte izquierda */
+  z-index: 9999; /* Asegura que esté delante de todo */
+  transform: rotate(220deg); /* Rota la imagen 14 grados */
+  width: 100px; /* Ajusta el tamaño según sea necesario */
+}
+
+
+/* Modifica la barra de scroll */
+::-webkit-scrollbar {
+  width: 5px; /* Ancho del scroll vertical */
+  height: 5px; /* Alto del scroll horizontal */
+}
+
+/* Modifica el fondo del scroll */
+::-webkit-scrollbar-track {
+  background: #792f04;
+  border-radius: 10px;
+}
+
+/* Modifica el pulgar del scroll */
+::-webkit-scrollbar-thumb {
+  background: #ffa600;
+  border-radius: 10px;
+}
+
+/* Cambia el pulgar cuando se pasa el cursor */
+::-webkit-scrollbar-thumb:hover {
+  background: #ffa600;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Asegura que el fondo cubra toda la pantalla */
+}
+
+body.light-theme {
+  background-color: rgb(233, 233, 233);
+  color: black; /* Color del texto en tema claro */
+}
+body.dark-theme footer{
+  background-color: rgb(162, 48, 2);
+}
+
+body.light-theme .home-section {
+  background-color: rgb(233, 233, 233);
+  color: black; /* Color del texto en tema claro */
+}
+
+
+
+body.light-theme .navbar .nav-link {
+  color: black;
+}
+
+body.dark-theme {
+  background-color: rgb(162, 48, 2);
+  color: rgb(180, 212, 211);
+}
+
+body.dark-theme .navbar {
+  background-color: #ecdfdf00;
+}
+
+body.dark-theme .navbar .nav-link {
+  color: rgb(221, 216, 216);
+}
+
+
+.img-light, .img-dark {
+  display: none;
+}
+
+/* Mostrar imagen clara en tema claro */
+body.light-theme .img-light {
+  display: block;
+}
+
+/* Mostrar imagen oscura en tema oscuro */
+body.dark-theme .img-dark {
+  display: block;
+}
+
+body.dark-theme .textitle  {
+  color: rgb(255, 255, 255);
+}
+
+body.dark-theme .texto {
+  color: rgb(211, 169, 153);
+}
+
+body.dark-theme .subtexto {
+  color: rgb(65, 49, 40);
+}
+
+body.dark-theme .subtitle{
+  color: rgb(255, 255, 255);
+}
+body.dark-theme .contenido {
+  background: rgba(216, 137, 92, 0.966);
+  border: 2px solid rgb(255, 189, 163) ;
+}
+
+body.dark-theme .image-hover-container {
+  background-color: #e6712d;
+}
+
+body.dark-theme .column{
+  background: #a23002;
+  box-shadow: inset 14px 14px 21px #6b2001,
+            inset -14px -14px 21px #d94003;
+}
+
+/* Botón del tema */
+#theme-toggle {
+  margin-left: 10px;
+}
+
+.textitle{
+  width: 480px;
+  color: #4d403a;
+  /* -webkit-text-stroke: 2px rgb(255, 221, 176);  */
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-size: 84px;
+  
+}
+.texto{
+  color: rgb(165, 124, 100);
+  font-family: "Acme", sans-serif;
+  font-weight: 400;
+  width: 520px;
+  font-style: normal;
+  font-size: 30px;
+  
+} 
+
+.background-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;  /* Ocupa todo el ancho del contenedor */
+  height: 100%; 
+  
+}
+
+
+.subtitle{
+  
+  color: rgb(51, 42, 42);
+  /* -webkit-text-stroke: 2px rgb(255, 221, 176);  */
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-size: 38px;
+  
+}
+
+.subtexto{
+  color: rgb(245, 213, 154);
+  font-family: "Acme", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 20px;
+  
+}
+
+.imgmapas {
+  width: 480px;
+  height: 100%;
+  object-fit: cover;
+  /* mask-image: linear-gradient(black 75%, transparent); */
+  position: relative; 
+  z-index: 1000;
+}
+
+/* Centra el contenido en la primera columna */
+.home-content {
+  text-align: center;
+}
+#map {
+  height: 550px;
+  width: 100%;
+  border-top-left-radius: 20px;   /* Esquina superior izquierda */
+  border-bottom-left-radius: 20px;
+  background-attachment: scroll;
+  mask-image: linear-gradient(
+    black 90%,
+    transparent
+  );  
+}
+
+.img-fluid {
+  height: 500px !important; 
+  width: auto; /* Asegura que la proporción de la imagen no se distorsione */
+}
+
+footer {
+  position: relative;
+  height: 150px; /* Ajusta el alto del footer según lo necesites */
+  background-color:rgb(233, 233, 233);/* Color de fondo del footer */
+  overflow: hidden; /* Oculta cualquier contenido que sobresalga */
+  max-width: auto; /* Asegura que la imagen no exceda el ancho del footer */
+  height: 300px;
+}
+
+.imgfooter {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  max-width: 900px; /* Asegura que la imagen no exceda el ancho del footer */
+  max-height: 300px; /* Asegura que la imagen no exceda el alto del footer */
+  object-fit: contain; /* Mantiene las proporciones de la imagen dentro del contenedor */
+}
+
+@media (min-width: 1424px) {
+  .textitle {
+    width: 700px;
+    font-size: 96px;
+  }
+  .texto {
+    width: 700px;
+    font-size: 36px;
+  }
+}
+
+/* Para pantallas medianas (tablets) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .textitle {
+    width: 400px;
+    font-size: 72px;
+  }
+  .texto {
+    width: 400px;
+    font-size: 28px;
+  }
+}
+
+/* Para pantallas pequeñas (móviles) */
+@media (max-width: 767px) {
+  .textitle {
+    width: auto;
+    font-size: 58px;
+  }
+  .texto {
+    width: auto;
+    font-size: 20px;
+  }
+  .home-section .row {
+    height: 100vh; 
+  }
+  .background-img {
+    width: 100%;  /* Ocupa todo el ancho del contenedor */
+    height: 500px; 
+    
+  }
+  .home-content {
+    position: absolute;
+    top: 400px;
+    left: 50%;
+    z-index: 1000;
+    transform: translateX(-50%);
+    width: 100%; /* Asegura que el contenido se ajuste al ancho */
+  }
+
+  .home-content h1,
+  .home-content p,
+  .home-content a {
+    margin: 0; /* Elimina márgenes adicionales */
+  }
+
+  .home-content div {
+    margin-top: 1rem; /* Espaciado entre los botones */
+  }
+  .flecha1{
+    display: none;
+  }
+  .espiga{
+    display: none;
+  }
+  .flecha2 {
+    top: -60px; 
+    left: 20px; 
+    transform: rotate(70deg); 
+    width: 100px; 
+  }
+  .subtitle{
+    text-align: center;
+    font-weight: 400;
+    font-size: 28px; 
+  }
+  .subtexto{
+    text-align: center;
+    font-size: 18px;
+    
+  }
+  .subtext2{
+    display: none;
+  }
+  .imgmapas {
+   display: none;
+  }
+  #map {
+    height: 550px;
+    width: 100%;
+    border-top-left-radius: 0;  
+    border-bottom-left-radius:0;
+    mask-image: linear-gradient(
+      black 100%,
+      transparent
+    );  
+  }
+  .img-fluid {
+    height: 300px !important;
+    width: auto; 
+  }
+  footer {
+    height: 200px;
+  }
+  
+  .imgfooter {
+    max-width: 300px; 
+    max-height: 200px; 
+  }
+  
+}
+
+.bginsta{
+  background-image:linear-gradient(rgb(255, 83, 4),rgb(255, 16, 155));
+}
+
+.custom-bg{
+  background-color: rgba(92, 32, 2, 0.966);
+  border-radius: 25px;
+  border: 1px solid rgb(255, 245, 190);
+}
+/* Aseguramos que todo el contenido de la navbar esté en una fila */
+.navbar {
+  padding: 15px 0;
+  transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+  position: fixed; /* Fija la barra de navegación en la parte superior */
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Navbar con fondo transparente */
+.navbar-transparent {
+  background-color: transparent !important;
+  backdrop-filter: blur(0px); /* Sin difuminar cuando está en transparente */
+}
+
+/* Asegura que el logo y el botón estén en la misma fila */
+.navbar-nav {
+  display: flex;
+  align-items: center; /* Alineación vertical */
+}
+
+/* Hace que el logo se mantenga en la izquierda */
+.navbar-brand {
+  margin-right: auto; /* Empuja todo lo demás a la derecha */
+}
+
+/* Asegura que el botón de hamburguesa y los otros elementos estén en línea */
+.navbar-toggler {
+  position: absolute;
+  top: 10px; /* Ajusta según sea necesario */
+  right: 10px; /* Fija el botón hamburguesa a la esquina superior derecha */
+  z-index: 1050; /* Asegura que el botón esté sobre el menú */
+}
+
+/* Estilos para la barra de navegación cuando se hace scroll */
+.navbar-scrolled {
+  background-color: rgba(255, 255, 255, 0.13) !important;
+  backdrop-filter: blur(30px);
+}
+
+/* Asegura que el logo cambie de color al hacer scroll */
+.navbar-scrolled .navbar-brand img {
+  filter: brightness(0) invert(1); /* Cambia color del logo */
+}
+
+/* Responsividad para móviles */
+@media (max-width: 776px) {
+  .navbar-nav {
+    display: flex;
+    flex-direction: column; /* Mueve los elementos del menú verticalmente */
+    align-items: flex-start; /* Alinea a la izquierda */
+    margin-top: 60px; /* Separa un poco el menú del logo */
+  }
+
+  .navbar-toggler {
+    position: fixed; /* Fija el botón hamburguesa en la parte superior derecha */
+    right: 8px;
+    top: 8px;
+  }
+}
+
+
+
+
+.contenido {
+  position: relative;
+  background: rgba(1, 15, 15, 0.5);
+  border-radius: 20px;
+  border: 2px solid rgb(255, 255, 255) ;
+}
+.star-rating input[type="radio"] {
+  display: none;
+}
+
+.star-rating label {
+  font-size: 30px;
+  color: #ddd;
+  cursor: pointer;
+}
+
+.star-rating input[type="radio"]:checked ~ label {
+  color: gold;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: gold;
+}
+
+/* section contenido  */
+.image-slider {
+  position: relative;
+  width: 400px;
+  height: 350px;
+  overflow: hidden; /* Oculta las imágenes que no estén visibles */
+}
+
+.slider-image {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: slideShow 9s infinite;
+}
+
+@keyframes slideShow {
+  0%, 33.33% {
+    opacity: 1;
+  }
+  34%, 66.66% {
+    opacity: 0;
+  }
+  67%, 100% {
+    opacity: 0;
+  }
+}
+
+
+
+/* Ajustar la animación para que cambie entre las imágenes */
+.slider-image:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.slider-image:nth-child(2) {
+  animation-delay: 3s;
+}
+
+.slider-image:nth-child(3) {
+  animation-delay: 6s;
+}
+
+/* Transición suave para el cambio de opacidad */
+.slider-image {
+  transition: opacity 1s ease-in-out;
+}
+
+
+
+/* Contenedor principal */
+.image-hover-container {
+  position: relative;
+  overflow: visible;
+  display: flex;
+  border-radius: 12px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 250px;
+  background-color: #010c0f33;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Imagen por defecto (ocupa todo el contenedor) */
+.img-default {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Imagen que aparece al hover */
+.img-hover {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  z-index: 10;
+}
+
+/* Efecto hover */
+.image-hover-container:hover .img-default {
+  opacity: 0;
+}
+
+.image-hover-container:hover .img-hover {
+  opacity: 1;
+  transform: translate(-50%, -150%) scale(1.5);
+}
+
+/* Detalles (precio y puntuación) */
+.details {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  color: #ddd;
+
+  border-radius: 12px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 18px 0;
+  background-color: #02121600;
+   
+ 
+}
+
+/* Precio */
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Puntuación */
+.rating {
+  font-size: 1.2rem;
+  color: #ffc107; /* Amarillo para estrellas */
+  text-align: center;
+  line-height: 1;
+}
+
+
+
+
+/* La sección ocupará toda la pantalla */
+.home-section {
+  height: auto; 
+  width: 100%; 
+}
+
+
+.home-section .row {
+  height: 100vh; 
+  width: 100%; 
+ 
+}
+
+
+.home-img {
+  position: relative;
+  width: 100%;
+  height: 100vh;  /* Ocupa toda la altura disponible del contenedor */
+}
+
+
+
+
+.falling-snow {
+  width: 100px;
+  height: 100px; 
+  position: absolute;
+  top: -50px; /* Inicialmente fuera de la pantalla, en la parte superior */
+  opacity: 1;
+  animation: fall 7s ease-in-out infinite; /* Animación común para todas las imágenes */
+}
+
+/* Animaciones para cada imagen, con posiciones y tiempos distintos */
+
+/* Primera imagen */
+.snow1 {
+  left: 10%; /* Posición inicial de la imagen 1 */
+  animation-name: fall1;
+  animation-duration: 7s;
+  animation-delay: 0s;
+
+}
+
+/* Segunda imagen */
+.snow2 {
+  left: 30%; /* Posición inicial de la imagen 2 */
+  animation-name: fall2;
+  animation-duration: 8s;
+  animation-delay: 1s;
+}
+
+/* Tercera imagen */
+.snow3 {
+  left: 60%; /* Posición inicial de la imagen 3 */
+  animation-name: fall3;
+  animation-duration: 9s;
+  animation-delay: 2s;
+}
+
+/* Animación para la imagen 1 */
+@keyframes fall1 {
+  0% {
+    top: -50px;
+    left: 10%;
+    opacity: 1;
+  }
+  25% {
+    top: 25%;
+    left: 15%; /* Movimiento horizontal para la imagen 1 */
+    opacity: 1;
+  }
+  50% {
+    top: 50%;
+    left: 10%; /* Movimiento horizontal hacia el centro */
+    opacity: 1;
+  }
+  75% {
+    top: 75%;
+    left: 5%; /* Movimiento horizontal hacia la izquierda */
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    left: 10%; /* La imagen desaparece al final */
+    opacity: 0;
+  }
+}
+
+/* Animación para la imagen 2 */
+@keyframes fall2 {
+  0% {
+    top: -50px;
+    left: 30%;
+    opacity: 1;
+  }
+  25% {
+    top: 25%;
+    left: 35%; /* Movimiento horizontal para la imagen 2 */
+    opacity: 1;
+  }
+  50% {
+    top: 50%;
+    left: 30%; /* Movimiento horizontal hacia el centro */
+    opacity: 1;
+  }
+  75% {
+    top: 75%;
+    left: 25%; /* Movimiento horizontal hacia la izquierda */
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    left: 30%; /* La imagen desaparece al final */
+    opacity: 0;
+  }
+}
+
+/* Animación para la imagen 3 */
+@keyframes fall3 {
+  0% {
+    top: -50px;
+    left: 60%;
+    opacity: 1;
+  }
+  25% {
+    top: 25%;
+    left: 65%; /* Movimiento horizontal para la imagen 3 */
+    opacity: 1;
+  }
+  50% {
+    top: 50%;
+    left: 60%; /* Movimiento horizontal hacia el centro */
+    opacity: 1;
+  }
+  75% {
+    top: 75%;
+    left: 55%; /* Movimiento horizontal hacia la izquierda */
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    left: 60%; /* La imagen desaparece al final */
+    opacity: 0;
+  }
+}
+
+
+
+.logomapa {
+  position: relative; 
+}
+
+.logomapa .imgma {
+  position: absolute; /* Asegura que la imagen se posicione dentro del contenedor */
+  top:10px; /* Ajusta según tus necesidades */
+  left: 0px; /* Ajusta según tus necesidades */
+  z-index: 1000; /* Asegura que esté por encima de todo el contenido */
+  width: 570px; /* Ajusta el tamaño de la imagen según lo necesites */
+  height: 590px; /* Mantén la proporción de la imagen */
+  /* mask-image: linear-gradient(to bottom, 
+                                transparent 0%, 
+                                black 5%, 
+                                black 94%, 
+                                transparent 100%);   */
+}
+
+
+
+.image-container {
+  position: relative;
+  width: 500px;
+  height: 590px;
+}
+
+
+
+
+
+
+
+.nav-link {
+  color: #fdfeff;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.conten {
+  height: auto; /* Se ajusta automáticamente al contenido */
+  max-height: 100%; /* Evita que el contenedor sea demasiado grande */
+}
+
+
+
+.btn {
+  font-size: 0.9rem;
+}
+
+.imgdelivery{
+  width: 150px;
+  height: 100px;
+}
+.column{
+  border-radius: 19px;
+  background: rgba(233, 233, 233);
+  box-shadow: inset 14px 14px 21px #68676781,
+            inset -14px -14px 21px #cfcece;
+}
+
+.floating-buttons {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+.floating-buttons .btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+

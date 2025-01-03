@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<br>
+<article class="container-fluid p-5 cont-pange">
+    <div class="container mt-4">
+        <h2 class="mb-4 title ">Agregar Usuario</h2>
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <!-- Campos del formulario -->
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.email|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.nombre|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.apellido|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.apellidoM|as_crispy_field }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.is_active|as_crispy_field }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.is_staff|as_crispy_field }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.is_superuser|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.password1|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.password2|as_crispy_field }}
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        {{ form.groups|as_crispy_field }}
+                    </div>
+                    <div class="col-md-9">
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Usuario:</label><br>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" name="tipo_usuario" value="cliente" id="cliente" class="form-check-input">
+                                <label for="cliente" class="form-check-label">Cliente</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" name="tipo_usuario" value="empleado" id="empleado" class="form-check-input">
+                                <label for="empleado" class="form-check-label">Empleado</label>
+                            </div>
+                        </div>
+                
+                        <!-- Cliente -->
+                        <div id="cliente-fields" class="d-none">
+                            <div class="mb-3">
+                                <label for="imagen" class="form-label">Imagen:</label>
+                                <input type="file" name="imagen" id="imagen" class="form-control">
+                            </div>
+                            <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label for="negocio" class="form-label">Negocio:</label>
+                                    <input type="text" name="negocio" id="negocio" class="form-control">
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="contacto" class="form-label">Contacto:</label>
+                                    <input type="text" name="contacto" id="contacto" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        
+                
+                        <!-- Empleado -->
+                        <div id="empleado-fields" class="d-none">
+                            <div class="row">
+                                <div class="mb-3 col-md-8">
+                                    <label for="domicilio" class="form-label">Domicilio:</label>
+                                    <textarea name="domicilio" id="domicilio" class="form-control"></textarea>
+                                </div>
+                                <div class="mb-3 col-md-4">
+                                    <label for="division" class="form-label">División:</label>
+                                    <select name="division" id="division" class="form-control">
+                                        <option value="">Seleccione una división</option>
+                                        {% for division in divisiones %}
+                                            <option value="{{ division.id }}">{{ division.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            <!-- Botón de envío -->
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+    
+</article>
+
+<script>
+    document.querySelectorAll('input[name="tipo_usuario"]').forEach(input => {
+        input.addEventListener('change', () => {
+            document.getElementById('cliente-fields').classList.toggle('d-none', input.value !== 'cliente');
+            document.getElementById('empleado-fields').classList.toggle('d-none', input.value !== 'empleado');
+        });
+    });
+</script>
+{% endblock %}
