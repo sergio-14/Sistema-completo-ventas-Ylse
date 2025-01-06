@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'servicio',
+    'widget_tweaks',
     'crispy_forms',
     'crispy_bootstrap5',
 ]

@@ -73,7 +73,7 @@ class ProductoRetornable(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"Producto {self.id} - {self.tipo_producto.nombre}"
+        return f"{self.descripcion} - ${self.precio:.2f}"
 
 class Producto(models.Model):  
     tipo_producto = models.ForeignKey(TipoProducto, on_delete=models.CASCADE)
@@ -81,7 +81,7 @@ class Producto(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.tipo_producto.nombre} - {self.stock} unidades"
+        return f"{self.tipo_producto.nombre} - ${self.precio:.2f}"
 
 # Modelo de Clientes
 class Cliente(models.Model):
@@ -132,16 +132,17 @@ class GastoDiario(models.Model):
 class Venta(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
-    fecha = models.DateField(auto_now_add=True)
+    fecha = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     anticipo = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     saldo_pendiente = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)    
     productos = models.ManyToManyField(ProductoRetornable, related_name='ventas')
     
-    
+    class Meta:
+        ordering = ['-fecha']
 
     def __str__(self):
-        return f"{self.cliente.negocio} - {self.fecha}"
+        return f"{self.cliente.negocio}"
 
 
 class DetalleVenta(models.Model):
@@ -150,9 +151,7 @@ class DetalleVenta(models.Model):
     cantidad = models.PositiveIntegerField(default=1)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
 
-    def save(self, *args, **kwargs):
-        self.subtotal = self.producto.precio * self.cantidad
-        super().save(*args, **kwargs)
+    
 
     def __str__(self):
         return f"Venta {self.venta.id} - Producto {self.producto.id} ({self.cantidad})"

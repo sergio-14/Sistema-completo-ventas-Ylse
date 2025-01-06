@@ -28,7 +28,14 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     
     
-    path('registro_venta/', views.registrar_venta, name='registro_venta'),
+    
+    path('registrar/', views.registrar_venta, name='registrar_venta'),
+    path('ventas/saldo-cliente/<int:cliente_id>/', views.obtener_saldo_cliente, name='obtener_saldo_cliente'),
+    
+    path('crear_venta/', views.crear_venta, name='crear_venta'),
+    
+    
+    
     
     #users
     path('usuarios/agregar/', views.agregar_usuario, name='agregar_usuario'),
@@ -37,9 +44,13 @@ urlpatterns = [
     
 
     path('ventas/list', views.venta_list, name='venta_list'),
+    #path('clientes/<int:cliente_id>/saldo/', views.obtener_saldo_pendiente, name='obtener_saldo_pendiente'),
+    #path('get_saldo_cliente/<int:cliente_id>/', views.get_saldo_cliente, name='get_saldo_cliente'),
+    
+    
     #path('ventas/nueva/', VentaCreateView.as_view(), name='venta_create'),
     path('ventas/<int:pk>/', VentaDetailView.as_view(), name='venta_detail'),
-    path('ventas/nueva/', views.crear_venta, name='venta_create'),
+    #path('ventas/nueva/', views.crear_venta, name='venta_create'),
     path('venta/<int:venta_id>/', views.detalle_venta, name='detalle_venta'),
     
     #login

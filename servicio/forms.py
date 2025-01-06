@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import authenticate
 from django.core.files import File
 from django.forms import inlineformset_factory
-from .models import DetalleVenta,Empleado,DivisionEmpleado
+from .models import DetalleVenta,Empleado,DivisionEmpleado,Cliente,ProductoRetornable
 
 class GroupForm(forms.ModelForm):
     class Meta:
@@ -124,39 +124,74 @@ class CustomUserChangeForm(forms.ModelForm):
             'apellidoM': 'Apellido Materno',
         }
         
+
 class VentaForm(forms.ModelForm):
+    productos = forms.ModelMultipleChoiceField(
+        queryset=ProductoRetornable.objects.filter(estado='Disponible'),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'btn-check'}),
+        required=True,
+    )
+    anticipo = forms.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        required=True,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+    )
+
     class Meta:
         model = Venta
-        fields = ['cliente', 'empleado', 'productos', 'anticipo']
+        fields = ['cliente', 'productos', 'anticipo', 'saldo_pendiente', 'total']
         widgets = {
             'cliente': forms.Select(attrs={'class': 'form-control'}),
-            'empleado': forms.Select(attrs={'class': 'form-control'}),
-            'productos': forms.CheckboxSelectMultiple(attrs={'class': 'btn-check'}),
-            'anticipo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.00'}),
+            'saldo_pendiente': forms.HiddenInput(),  
+            'total': forms.HiddenInput(),  
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Filtrar los productos retornables con estado 'Disponible'
+        # Filtrar productos retornables con estado 'Disponible'
         productos_disponibles = ProductoRetornable.objects.filter(estado='Disponible')
+        
 
-        # Agrupar los productos por tipo
+        # Agrupar productos por tipo de producto y añadir el precio
         grouped_products = {}
         for producto in productos_disponibles:
             tipo = producto.tipo_producto.nombre
             if tipo not in grouped_products:
                 grouped_products[tipo] = []
-            grouped_products[tipo].append((producto.id, producto.descripcion))
+            grouped_products[tipo].append(
+                (producto.id, f"{producto.descripcion} - {producto.precio:.2f} bs.")
+            )
 
-        # Crear las opciones agrupadas en el formato adecuado para CheckboxSelectMultiple
+        # Crear las opciones agrupadas en formato para CheckboxSelectMultiple
         grouped_choices = []
         for tipo, productos in grouped_products.items():
-            # La clave de cada grupo es el nombre del tipo, y los valores son una lista de tuplas
             grouped_choices.append((tipo, productos))
 
-        # Establecer las opciones del campo 'productos' con los productos agrupados
+        # Establecer las opciones agrupadas para el campo 'productos'
         self.fields['productos'].widget.choices = grouped_choices
+
+        # Configurar el queryset de clientes
+        self.fields['cliente'].queryset = Cliente.objects.all()
+            
+        
+"""class VentaForm(forms.ModelForm):
+    class Meta:
+        model = Venta
+        fields = ['cliente','empleado', 'productos', 'anticipo']
+        widgets = {
+            'cliente': forms.Select(attrs={'class': 'form-control'}),
+            'productos': forms.CheckboxSelectMultiple(),
+            'anticipo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.00'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)"""
+
+        
+        
+        
         
 
 class DetalleVentaForm(forms.ModelForm):
@@ -167,7 +202,10 @@ class DetalleVentaForm(forms.ModelForm):
             'producto': forms.Select(attrs={'class': 'form-control'}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
         }
-        
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['producto'].queryset = Producto.objects.all()
         
 class EmpleadoForm(forms.ModelForm):
     class Meta:

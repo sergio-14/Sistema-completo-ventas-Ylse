@@ -1,86 +1,255 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
-{% block content %} 
-<form method="post">
-    {% csrf_token %}
-    <h3>Registro de Venta</h3>
-    <div class="row">
-        <div class="col-md-6">
-            {{ form.cliente|as_crispy_field }}
-        </div>
-        <div class="col-md-6">
-            {{ form.empleado|as_crispy_field }}
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="productos">Selecciona los productos:</label>
-                <div class="d-flex flex-wrap">  <!-- Usamos d-flex para hacer el contenedor un Flexbox -->
-                    {% for group_name, group_products in form.productos.field.widget.choices %}
-                        <div class="w-100 mb-3">  <!-- Cada tipo de producto en su propia fila -->
-                            <h5>{{ group_name }}</h5>
-                            <div class="d-flex flex-wrap">  <!-- Usamos flex-wrap para envolver los productos cuando no hay suficiente espacio -->
-                                {% for product_id, product_description in group_products %}
-                                    <div class="btn-group me-2 mb-2"> <!-- btn-group para agrupar checkbox y label -->
-                                        <input type="checkbox" class="btn-check" id="product-{{ product_id }}" autocomplete="off" name="productos" value="{{ product_id }}">
-                                        <label class="btn btn-outline-secondary" for="product-{{ product_id }}">{{ product_description }}</label>
-                                    </div>
-                                {% endfor %}
-                            </div>
+{% load widget_tweaks %}
+
+{% block content %}
+<br>
+<div class="text cont-pange container-fluid p-5">
+    <form method="post">
+        {% csrf_token %}
+        <h3>Registro de Venta</h3>
+        <div class="row">
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="mb-3">
+                            {{ form.cliente.label_tag }}
+                            {{ form.cliente|add_class:"form-select" }}
+                            {% if form.cliente.errors %}
+                                <div class="text-danger">{{ form.cliente.errors }}</div>
+                            {% endif %}
                         </div>
-                    {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label>Deuda: </label>
+                            <input type="text" id="saldo-pendiente" class="form-control" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="productos">Selecciona los productos:</label>
+                        <div class="d-flex flex-wrap">
+                            {% for group_name, group_products in form.productos.field.widget.choices %}
+                                <div class="w-100 mb-3">
+                                    <h5>{{ group_name }}</h5>
+                                    <div class="d-flex flex-wrap">
+                                        {% for product_id, product_description in group_products %}
+                                            <div class="btn-group me-2 mb-2">
+                                                <input type="checkbox" class="btn-check" id="product-{{ product_id }}" autocomplete="off" name="productos" value="{{ product_id }}">
+                                                <label class="btn btn-outline-secondary" for="product-{{ product_id }}">{{ product_description }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if form.productos.errors %}
+                        <div class="text-danger">{{ form.productos.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="row" id="nuevo-detalle">
+                    <div class="col-md-6">
+                        <label for="id_producto">Producto</label>
+                        <select class="form-control" id="id_producto">
+                            {% for producto in productos %}
+                                <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">
+                                    {{ producto.tipo_producto__nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="id_cantidad">Cantidad</label>
+                        <input type="number" id="id_cantidad" class="form-control" min="1">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="button" id="add-row" class="btn btn-primary">Agregar Producto</button>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            {{ form.anticipo.label_tag }}
+                            {{ form.anticipo|add_class:"form-control" }}
+                            {% if form.anticipo.errors %}
+                                <div class="text-danger">{{ form.anticipo.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <label>Subtotal:</label>
+                            <input type="text" id="subtotal-general" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            {{ form.saldo_pendiente.label_tag }}
+                            {{ form.saldo_pendiente|add_class:"form-select" }}
+                            <input type="text" id="total-nuevo-saldo" class="form-control" readonly>
+                            {% if form.saldo_pendiente.errors %}
+                                <div class="text-danger">{{ form.saldo_pendiente.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            {{ form.total.label_tag }}
+                            {{ form.total|add_class:"form-select" }}
+                            <input type="text" id="total-general" class="form-control" readonly>
+                            {% if form.total.errors %}
+                                <div class="text-danger">{{ form.total.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="col-md-5">
+                <h3>Detalles de Venta</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productos-table">
+                        <!-- Productos seleccionados se añadirán aquí dinámicamente -->
+                    </tbody>
+                </table>
+                <hr>
+                {{ formset.management_form }}
+                <table class="table table-bordered" id="detalle-venta-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalle-lista">
+                        {% for form in formset %}
+                            <tr class="form-row">
+                                <td>{{ form.producto }}</td>
+                                <td>{{ form.cantidad }}</td>
+                                <td class="subtotal">0.00</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
+                                </td>
+                            </tr>
+                            {% if form.errors %}
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="text-danger">{{ form.errors }}</div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Subtotal Productos no Retornables: Bs.</strong></td>
+                            <td id="total-general-no-retornable">0.00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
-        <div class="col-md-6">
-            {{ form.anticipo|as_crispy_field }}
-        </div>
-    </div>
+        <br>
+        <button type="submit" class="btn btn-success mt-3">Guardar Venta</button>
+    </form>
+</div>
 
-    <h3>Detalles de Venta</h3>
-    {{ formset.management_form }}
-    <table class="table table-bordered" id="detalle-venta-table">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Eliminar</th>
-            </tr>
-        </thead>
-        <tbody id="detalle-lista">
-            <!-- Los detalles existentes se renderizan aquí -->
-            {% for form in formset %}
-            <tr class="form-row">
-                <td>{{ form.producto }}</td>
-                <td>{{ form.cantidad }}</td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
-    <!-- Fila para agregar nuevos productos -->
-    <div class="row" id="nuevo-detalle">
-        <div class="col-md-6">
-            <label for="id_producto">Producto</label>
-            <select class="form-control" id="id_producto">
-                {% for producto in productos %}
-                <option value="{{ producto.id }}">{{ producto.tipo_producto.nombre }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label for="id_cantidad">Cantidad</label>
-            <input type="number" id="id_cantidad" class="form-control" min="1">
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-            <button type="button" id="add-row" class="btn btn-primary">Agregar Producto</button>
-        </div>
-    </div>
+<script>
+    // Variables for form elements
+    const clienteSelect = document.getElementById('id_cliente');
+    const saldoPendienteInput = document.getElementById('saldo-pendiente');
+    const subtotalInput = document.getElementById('subtotal-general');
+    const anticipoInput = document.getElementById('id_anticipo');
+    const totalNuevoSaldoInput = document.getElementById('total-nuevo-saldo');
+    const totalGeneralInput = document.getElementById('total-general');
+    const saldoPendienteFormInput = document.getElementById('id_saldo_pendiente');
+    const totalFormInput = document.getElementById('id_total');
+    const productosTable = document.getElementById('productos-table');
+    const totalGeneralNoRetornable = document.getElementById('total-general-no-retornable');
 
-    <button type="submit" class="btn btn-success mt-3">Guardar Venta</button>
-</form>
+    // Function to update totals
+    function actualizarTotales() {
+        const subtotal = parseFloat(subtotalInput.value) || 0;
+        const saldoPendiente = parseFloat(saldoPendienteInput.value) || 0;
+        const anticipo = parseFloat(anticipoInput.value) || 0;
+
+        // Total Nuevo Saldo: subtotal + saldo pendiente - anticipo
+        const totalNuevoSaldo = subtotal + saldoPendiente + parseFloat(totalGeneralNoRetornable.textContent) - anticipo;
+        totalNuevoSaldoInput.value = totalNuevoSaldo.toFixed(2);
+        saldoPendienteFormInput.value = totalNuevoSaldo.toFixed(2);
+
+        // Total General: saldo pendiente + subtotal + total_general_no_retornable
+        const totalGeneral = saldoPendiente + subtotal + parseFloat(totalGeneralNoRetornable.textContent);
+        totalGeneralInput.value = totalGeneral.toFixed(2);
+        totalFormInput.value = totalGeneral.toFixed(2);
+    }
+
+    // When cliente is selected
+    clienteSelect.addEventListener('change', function() {
+        const clienteId = this.value;
+        console.log("Cliente seleccionado:", clienteId);
+        if (clienteId) {
+            fetch(`/ventas/saldo-cliente/${clienteId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    saldoPendienteInput.value = data.saldo_pendiente || '0.00';
+                    actualizarTotales();
+                })
+                .catch(error => console.error('Error fetching saldo pendiente:', error));
+        } else {
+            saldoPendienteInput.value = '';
+            actualizarTotales();
+        }
+    });
+
+    // When productos selection changes
+    document.addEventListener('change', function(event) {
+        if (event.target.matches('input[type="checkbox"][name="productos"]')) {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][name="productos"]:checked');
+            let subtotal = 0;
+            productosTable.innerHTML = '';
+
+            checkboxes.forEach(checkbox => {
+                const productLabel = document.querySelector(`label[for="${checkbox.id}"]`);
+                const productoText = productLabel ? productLabel.innerText : '';
+                const precioTexto = productoText.split('-').pop().trim();
+                const precio = parseFloat(precioTexto.replace('$', '').replace(',', ''));
+
+                if (!isNaN(precio)) {
+                    subtotal += precio;
+                    const row = `
+                        <tr>
+                            <td>${productoText}</td>
+                            <td>${precio.toFixed(2)}</td>
+                        </tr>
+                    `;
+                    productosTable.insertAdjacentHTML('beforeend', row);
+                }
+            });
+
+            subtotalInput.value = subtotal.toFixed(2);
+            actualizarTotales();
+        }
+    });
+
+    // When anticipo changes
+    anticipoInput.addEventListener('input', actualizarTotales);
+
+    // On page load
+    actualizarTotales();
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -89,56 +258,90 @@
         const productoSelect = document.getElementById('id_producto');
         const cantidadInput = document.getElementById('id_cantidad');
         const totalForms = document.querySelector('#id_form-TOTAL_FORMS');
+        const totalGeneralElement = document.getElementById('total-general-no-retornable');
 
+        // Actualiza el total general
+        function updateTotalGeneral() {
+            let totalGeneral = 0;
+            document.querySelectorAll('.subtotal').forEach(function (subtotalCell) {
+                totalGeneral += parseFloat(subtotalCell.textContent || 0);
+            });
+            totalGeneralElement.textContent = totalGeneral.toFixed(2);
+        }
+
+        // Agregar fila a la tabla
         addRowButton.addEventListener('click', function () {
             const productoId = productoSelect.value;
-            const productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
-            const cantidad = cantidadInput.value;
+            const productoNombre = productoSelect.selectedOptions[0]?.textContent || '';
+            const precioProducto = parseFloat(productoSelect.selectedOptions[0]?.dataset.precio || 0);
+            const cantidad = parseInt(cantidadInput.value, 10);
 
-            if (!productoId || !cantidad || cantidad <= 0) {
-                alert('Selecciona un producto y una cantidad válida.');
+            // Validaciones
+            if (!productoId || isNaN(cantidad) || cantidad <= 0 || isNaN(precioProducto)) {
+                alert('Por favor, selecciona un producto y una cantidad válida.');
                 return;
             }
 
-            // Índice actual del formset
-            const formCount = parseInt(totalForms.value, 10);
+            // Verificar si el producto ya está en la tabla
+            const existingRow = Array.from(tableBody.querySelectorAll('input[name="producto"]')).find(
+                (input) => input.value === productoId
+            );
+            if (existingRow) {
+                alert('Este producto ya está en la lista.');
+                return;
+            }
 
-            // Nueva fila para el detalle
-            const newRow = document.createElement('tr');
-            newRow.classList.add('form-row');
-            newRow.innerHTML = `
+            // Calcular subtotal
+            const subtotal = cantidad * precioProducto;
+
+            // Crear nueva fila
+            const rowHTML = `
+            <tr class="form-row">
                 <td>
-                    <input type="hidden" name="form-${formCount}-producto" value="${productoId}">
+                    <input type="hidden" name="form-${totalForms.value}-producto" value="${productoId}">
                     ${productoNombre}
                 </td>
                 <td>
-                    <input type="number" name="form-${formCount}-cantidad" value="${cantidad}" class="form-control" readonly>
+                    <input type="number" name="form-${totalForms.value}-cantidad" value="${cantidad}" class="form-control" style="width: 60px;" readonly>
                 </td>
+                <td class="subtotal">${subtotal.toFixed(2)}</td>
                 <td>
                     <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
                 </td>
+            </tr>
             `;
-            tableBody.appendChild(newRow);
+            tableBody.insertAdjacentHTML('beforeend', rowHTML);
 
-            // Incrementar el número total de formularios
-            totalForms.value = formCount + 1;
-
-            // Limpiar los campos
-            productoSelect.value = '';
-            cantidadInput.value = '';
+            // Actualizar el conteo total de formularios
+            totalForms.value = parseInt(totalForms.value, 10) + 1;
+            updateTotalGeneral();
         });
 
+        // Eliminar fila al hacer clic en el botón de eliminar
         tableBody.addEventListener('click', function (event) {
             if (event.target.classList.contains('remove-row')) {
-                const row = event.target.closest('tr');
-                row.remove();
+                event.target.closest('tr').remove();
+                updateTotalGeneral();
 
-                // Actualiza el número total de formularios
-                const updatedFormCount = document.querySelectorAll('.form-row').length;
-                totalForms.value = updatedFormCount;
+                // Actualizar el conteo total de formularios
+                totalForms.value = Math.max(parseInt(totalForms.value, 10) - 1, 0);
             }
+        });
+
+        // Actualizar subtotal dinámicamente al cambiar el producto o la cantidad
+        productoSelect.addEventListener('change', function () {
+            const precio = parseFloat(this.selectedOptions[0]?.dataset.precio || 0);
+            const cantidad = parseInt(cantidadInput.value, 10) || 0;
+            const subtotal = precio * cantidad;
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+        });
+
+        cantidadInput.addEventListener('input', function () {
+            const precio = parseFloat(productoSelect.selectedOptions[0]?.dataset.precio || 0);
+            const cantidad = parseInt(this.value, 10) || 0;
+            const subtotal = precio * cantidad;
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
         });
     });
 </script>
 {% endblock %}
-

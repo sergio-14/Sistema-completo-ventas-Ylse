@@ -29,8 +29,8 @@ def dashboard(request):
 # Listar ventas
 def venta_list(request):
     # Obtener todos los registros de Venta y GastoDiario
-    ventas = Venta.objects.all()
-    gastos = GastoDiario.objects.all()
+    ventas = Venta.objects.all().order_by('-fecha') 
+    gastos = GastoDiario.objects.all().order_by('-fecha') 
 
     context = {
         'ventas': ventas,
@@ -102,117 +102,115 @@ def listar_usuarios(request):
     usuarios = User.objects.all()
     return render(request, 'usuarios/listar_usuarios.html', {'usuarios': usuarios})
 
-def crear_venta(request):
-    # Crear un formset para los detalles de la venta
-    DetalleVentaFormSet = formset_factory(DetalleVentaForm, extra=0)
-    
-    # Si el formulario es enviado con datos POST
+
+from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .forms import VentaForm
+
+def registrar_venta(request):
+    empleado = request.user.empleado  # Obtén el empleado relacionado con el usuario
     if request.method == 'POST':
         form = VentaForm(request.POST)
-        formset = DetalleVentaFormSet(request.POST)
-        
-        if form.is_valid() and formset.is_valid():
-            venta = form.save(commit=False)  # No guardar aún en la base de datos
+        if form.is_valid():
+            venta = form.save(commit=False)
+            venta.empleado = empleado  # Asigna el empleado automáticamente
+            venta.save()  # Guarda la venta
+            form.save_m2m()  # Guarda la relación Many-to-Many con productos
             
-            # Obtener los productos retornables seleccionados
-            productos_seleccionados_retornable = form.cleaned_data['productos']
-            anticipo = form.cleaned_data['anticipo']
-            
-            # Calcular el total de productos retornables y saldo pendiente
-            totalretornable = sum([producto.precio for producto in productos_seleccionados_retornable])
-            saldo_pendienteretorable = totalretornable - anticipo
-
-            # Guardar la venta primero para obtener su ID
-            venta.save()  # Aquí se guarda la venta para obtener el ID
-            
-            # Asignamos total y saldo pendiente a la venta
-            venta.total = totalretornable  # Inicializamos el total con los productos retornables
-            venta.saldo_pendiente = saldo_pendienteretorable  # Inicializamos el saldo pendiente
-            venta.save()  # Guardar la venta con los valores iniciales
-            
-            # Asociar los productos retornables a la venta
-            venta.productos.set(productos_seleccionados_retornable)
-            
-            # Actualizar el estado de los productos retornables a 'Ocupado'
-            for producto in productos_seleccionados_retornable:
+            # Actualiza el estado de los productos retornables
+            for producto in venta.productos.all():
                 producto.estado = 'Ocupado'
-                producto.save()  # Guardamos el cambio en el estado del producto
+                producto.save()
             
-            # Procesar los detalles de los productos no retornables desde el formset
-            total_no_retornable = 0
-            productos_seleccionados = []  
+            return redirect('venta_list')  # Redirige a la lista de ventas
+    else:
+        form = VentaForm()
+
+    return render(request, 'registrar_venta.html', {'form': form})
+
+
+@login_required
+def obtener_saldo_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+    ultima_venta = Venta.objects.filter(cliente=cliente).order_by('-fecha').first()
+    saldo_pendiente = float(ultima_venta.saldo_pendiente) if ultima_venta else 0
+    return JsonResponse({'saldo_pendiente': saldo_pendiente})
+
+
+
+
+from decimal import Decimal
+
+def crear_venta(request):
+    DetalleVentaFormSet = formset_factory(DetalleVentaForm, extra=0)
+    empleado = request.user.empleado  # Obtén el empleado relacionado con el usuario
+
+    if request.method == 'POST':
+        
+        form = VentaForm(request.POST)
+        formset = DetalleVentaFormSet(request.POST)
+
+        if form.is_valid() and formset.is_valid():
+            # Guardar la venta
+            venta = form.save(commit=False)
+            venta.empleado = empleado  # Asigna el empleado automáticamente
+            venta.save()  # Guarda la venta primero
+            form.save_m2m()  # Guarda la relación Many-to-Many con productos
+
+            # Actualizar estado de los productos retornables
+            for producto in venta.productos.all():
+                producto.estado = 'Ocupado'
+                producto.save()
+
+            # Guardar el detalle de la venta
             for detalle_form in formset:
                 if detalle_form.cleaned_data:
                     producto = detalle_form.cleaned_data['producto']
                     cantidad = detalle_form.cleaned_data['cantidad']
-                    subtotal = producto.precio * cantidad
-                    total_no_retornable += subtotal  # Sumar al total de productos no retornables
-                    
-                    # Crear el detalle de la venta con el subtotal calculado
+                    subtotal = cantidad * producto.precio  # Precio del producto desde el modelo
+
+                    # Crear y guardar el detalle de la venta
                     DetalleVenta.objects.create(
-                        venta=venta,  # Usar la venta ya guardada
+                        venta=venta,
                         producto=producto,
                         cantidad=cantidad,
                         subtotal=subtotal
                     )
-                    
-                    # Añadir el producto seleccionado a la lista de productos
-                    productos_seleccionados.append(producto)
-            
-            # Sumar el total de los productos no retornables al total de la venta
-            venta.total += total_no_retornable  # Sumar el total de los productos no retornables
-            
-            # Actualizar el saldo pendiente con el total completo de la venta
-            venta.saldo_pendiente = venta.total - venta.anticipo
-            venta.save()  # Guardar la venta con el total actualizado
-            
+
             # Redirigir a la lista de ventas
-            return redirect('venta_list')  
+            return redirect('venta_list')
+        else:
+            # Depuración de errores
+            if not form.is_valid():
+                print("Errores en el formulario principal:")
+                print(form.errors)
+
+            if not formset.is_valid():
+                print("Errores en el formset:")
+                for detalle_form in formset:
+                    print(detalle_form.errors)
     else:
-        form = VentaForm()  # Si el método no es POST, inicializar el formulario
-        formset = DetalleVentaFormSet()  # Inicializar el formset
-    
-    # Obtener todos los productos disponibles
-    productos = Producto.objects.all()
-    
-    # Renderizar la plantilla con los formularios y productos disponibles
+        form = VentaForm()
+        formset = DetalleVentaFormSet()
+
+    productos = Producto.objects.values('id', 'tipo_producto__nombre', 'precio')
     return render(request, 'ventas/venta_form.html', {
         'form': form,
         'formset': formset,
         'productos': productos,
     })
+
+
+
+from django.http import JsonResponse
+from .models import Cliente
+
+
+    
     
 
-def registrar_venta(request):
-    if request.method == "POST":
-        form = VentaForm(request.POST)
-        if form.is_valid():
-            venta = form.save(commit=False)  # No guarda aún para poder modificar algunos campos
-            productos_seleccionados_retornable = form.cleaned_data['productos']
-            anticipo = form.cleaned_data['anticipo']
-            
-            # Cálculo del total y saldo pendiente
-            totalretornable = sum([producto.precio for producto in productos_seleccionados_retornable])
-            saldo_pendienteretorable = totalretornable - anticipo
-            
-            # Asignamos total y saldo pendiente a la venta
-            venta.total = totalretornable
-            venta.saldo_pendiente = saldo_pendienteretorable
-            
-            # Guardamos la venta
-            venta.save()
-            venta.productos.set(productos_seleccionados_retornable)  # Asociar los productos a la venta
 
-            # Actualizar el estado de los productos a 'Ocupado'
-            for producto in productos_seleccionados_retornable:
-                producto.estado = 'Ocupado'
-                producto.save()  # Guardamos el cambio en el estado del producto
-
-            return redirect('venta_list')  # Redirigir a una vista de lista de ventas o alguna otra
-    else:
-        form = VentaForm()
-
-    return render(request, 'registro_venta.html', {'form': form})
 
 # Ver detalles de venta
 class VentaDetailView(DetailView):
