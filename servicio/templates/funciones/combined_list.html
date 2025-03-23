@@ -1,246 +1,181 @@
 {% extends 'base.html' %}
-
+{% load static %}
+{% load crispy_forms_tags %}
 {% block content %}
 <br>
-<div class="text container-fluid p-5 cont-pange">
-    <h2 class="title">Funcionalidades</h2>
-    <div class="text-end pt-1 pb-2">
-        <a class="btn btn-outline-success" href="{% url 'tipo_producto_create' %}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
-                <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
-            </svg>
-            Agregar Tipo Producto
-            </a>
-        <a class="btn btn-outline-success" href="{% url 'location_create' %}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
-                <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
-            </svg>    
-            Agregar Localización
-        </a>
-        <a class="btn btn-outline-success" href="{% url 'division_empleado_create' %}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
-                <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
-              </svg>
-            Agregar Ruta
-        </a>
-    </div>
+<div class="font container-fluid p-lg-5 py-5 cont-pange">
     <div class="row">
-        <!-- Tipo Productos Column -->
-        <div class="col-md-4">
-            <h2 class="subtitle py-1">Tipo Productos</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Tipo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in tipo_producto %}
-                    <tr>
-                        <td>{{ item.nombre }}</td>
-                        <td>
-                            <a href="{% url 'tipo_producto_edit' item.pk %}" class="btn btn-outline-warning">Editar</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="justify-content-end text-end">
-                <span>Páginas:</span>
-                {% if tipo_producto.has_previous %}
-                    
-                    <a href="?tipo_producto_page={{ tipo_producto.previous_page_number }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-black m-1 p-1 btn-sm rounded-circle bi-chevron-double-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                        </svg>
-                    </a>
-                {% else %}
-                    
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-secondary m-1 p-1 btn-sm rounded-circle bi-chevron-double-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                        </svg>
-                    </span>
-                {% endif %}
+        <div class="col-lg-9 col-12 order-2 order-lg-2">
+            <h2 class="title pb-lg-3">Locaciones de Negocios</h2>
+            <div class="pt-lg-5">
                 
-                {% for page_num in tipo_producto.paginator.page_range %}
-                    {% if tipo_producto.number == page_num %}
-                        <strong> {{ page_num }} </strong>
-                    {% elif page_num >= tipo_producto.number|add:'-2' and page_num <= tipo_producto.number|add:'2' %}
-                       
-                    {% endif %}
-                {% endfor %}
+                <button class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#locationModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+                        <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+                    </svg>    
+                    Agregar Localización
+                </button>
                 
-                {% if tipo_producto.has_next %}
-                    <a href="?tipo_producto_page={{ tipo_producto.next_page_number }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-black m-1 p-1 btn-sm rounded-circle bi-chevron-double-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"/>
-                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
-                    </a>
-                    
-                {% else %}
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-secondary m-1 p-1 btn-sm rounded-circle bi-chevron-double-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"/>
-                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
-                    </span>
-                   
-                {% endif %}
             </div>
         </div>
-
-        <!-- Locations Column -->
-        <div class="col-md-4">
-            <h2 class="subtitle py-1">Locationes de Negocios</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Negocio</th>
-                        <th>Cordenadas</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for location in locations %}
-                    <tr>
-                        <td>{{ location.cliente.negocio }}</td>
-                        <td>{{ location.latitude }}<br>
-                            {{ location.longitude }}
-                            
-                        </td>
-                        <td>
-                            <a href="{% url 'location_edit' location.pk %}" class="btn btn-outline-warning">Editar</a>
-                        </td>
-                       
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="justify-content-end text-end">
-                <span>Páginas:</span>
-                {% if locations.has_previous %}
-                   
-                    <a href="?location_page={{ locations.previous_page_number }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-black m-1 p-1 btn-sm rounded-circle bi-chevron-double-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                        </svg>
-                    </a>
-                {% else %}
+        <div class="col-lg-3 col-12 order-1 order-lg-2 justify-content-end text-end">
+            <img src="{% static 'img/logopie.png' %}" alt="Descripción de la imagen" style="height: 160px;" class="img-fluid">
+        </div>
+    </div>
+    <!-- Locations Column -->
+    <div class="mt-2">
+        
+        <table class="table table-striped text-center  ">
+            <thead class="table-color"> 
+                <tr>
+                    <th>Imagen</th>
+                    <th>Negocio</th>
+                    <th>Propietario</th>
                     
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-secondary m-1 p-1 btn-sm rounded-circle bi-chevron-double-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                        </svg>
-                    </span>
+                    <th>Cordenadas</th>
+                    <th>Ruta</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody >
+                {% for location in locations %}
+                <tr>
+                    <td data-label="foto">
+                        {% if location.cliente.imagen %}
+                            <img src="{{ location.cliente.imagen.url }}" alt="Imagen de {{ location.cliente.nombre }}" class="rounded-circle" width="50" height="50">
+                        {% else %}
+                            <span>Sin imagen</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="negocio">{{ location.cliente.negocio }}</td>
+                    <td data-label="cliente">{{ location.cliente.usuario }}</td>
+                  
+                    <td data-label="cordenada">{{ location.latitude }} |  
+                        {{ location.longitude }}
+                        
+                    </td>
+                    <td data-label="ruta">{{ location.ruta }}
+                    </td>
+                    <td data-label="accion">
+                        <button class="btn btn-warning text-white btn-sm edit-btn" data-bs-toggle="modal"  
+                            data-bs-target="#locationModal"
+                            data-id="{{ location.id }}" 
+                            data-cliente="{{ location.cliente.id }}"
+                            data-latitude="{{ location.latitude }}"
+                            data-longitude="{{ location.longitude }}"
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg>
+                            Editar
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination justify-content-end px-1">
+            <span class="step-links">
+                {% if locations.has_previous %}
+                    
+                    <a class="btn btn-secondary btn-sm" href="?location_page={{ locations.previous_page_number }}">anterior</a>
                 {% endif %}
                 
-                {% for page_num in locations.paginator.page_range %}
-                    {% if locations.number == page_num %}
-                        <strong>{{ page_num }}</strong>
-                    {% elif page_num >= locations.number|add:'-2' and page_num <= locations.number|add:'2' %}
-                        
-                    {% endif %}
-                {% endfor %}
+                <span class="current">
+                    Página {{ locations.number }} de {{ locations.paginator.num_pages }}
+                </span>
                 
                 {% if locations.has_next %}
-                    <a href="?location_page={{ locations.next_page_number }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-black m-1 p-1 btn-sm rounded-circle bi-chevron-double-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"/>
-                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
-                    </a>
+               
+                    <a class="btn btn-secondary btn-sm" href="?location_page={{ locations.next_page_number }}">siguiente</a>
                     
-                {% else %}
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-secondary m-1 p-1 btn-sm rounded-circle bi-chevron-double-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"/>
-                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
-                    </span>
-                 
                 {% endif %}
-            </div>
+            </span>
         </div>
-
-        <!-- División Empleados Column -->
-        <div class="col-md-4">
-            <h2 class="subtitle py-1">Rutas Empleados</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nombre Ruta</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for division in division_empleados %}
-                    <tr>
-                        <td>{{ division.nombre }}</td>
-                        <td>
-                            <a href="{% url 'division_empleado_edit' division.pk %}" class="btn btn-outline-warning">Editar</a>
-                        </td>
-                    </tr>
-                    
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="justify-content-end text-end">
-                <span>Páginas:</span>
-                {% if division_empleados.has_previous %}
-                    
-                    <a href="?division_empleado_page={{ division_empleados.previous_page_number }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-black m-1 p-1 btn-sm rounded-circle bi-chevron-double-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                        </svg>
-                    </a>
-                {% else %}
-                    
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-secondary m-1 p-1 btn-sm rounded-circle bi-chevron-double-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                        </svg>
-                    </span>
-                {% endif %}
-                
-                {% for page_num in division_empleados.paginator.page_range %}
-                    {% if division_empleados.number == page_num %}
-                        <strong>{{ page_num }}</strong>
-                    {% elif page_num >= division_empleados.number|add:'-2' and page_num <= division_empleados.number|add:'2' %}
-                     
-                    {% endif %}
-                {% endfor %}
-                
-                {% if division_empleados.has_next %}
-                    <a href="?division_empleado_page={{ division_empleados.next_page_number }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-black m-1 p-1 btn-sm rounded-circle bi-chevron-double-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"/>
-                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
-                    </a>
-                   
-                {% else %}
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi text-white bg-secondary m-1 p-1 btn-sm rounded-circle bi-chevron-double-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"/>
-                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
-                    </span>
-                  
-                {% endif %}
+       
+    </div>
+ 
+    
+    <!-- Modal -->
+    <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+        <div class="modal-dialog ">
+            <div class="modal-content " style="background-color:rgb(241, 241, 241);">
+                <div class="modal-header">
+                    <h3 class="modal-title text" id="locationModalLabel">Agregar Localización</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="locationForm" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="locationId" name="location_id">
+                        {{ form|crispy }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-dark">Guardar</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+    <hr>
+    
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.querySelector("#location-form");  // Asegúrate de que tu formulario tiene este ID
+    
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();  // Evitar que la página se recargue
+    
+            const formData = new FormData(form);
+    
+            fetch("{% url 'combined_list' %}", {  // Asegúrate de que esta URL es correcta
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar la lista de localizaciones sin recargar la página
+                    const locationList = document.querySelector("#location-list");
+                    locationList.innerHTML = "";  // Limpiar la lista actual
+                    
+                    JSON.parse(data.locations).forEach(location => {
+                        let newItem = document.createElement("li");
+                        newItem.textContent = location.fields.cliente + " - " + location.fields.latitude + ", " + location.fields.longitude;
+                        locationList.appendChild(newItem);
+                    });
+    
+                    form.reset();  // Limpiar el formulario
+                } else {
+                    alert("Error al agregar localización");
+                }
+            })
+            .catch(error => console.error("Error en la solicitud:", error));
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                let id = this.getAttribute("data-id");
+                let clienteId = this.getAttribute("data-cliente");
+                let latitude = parseFloat(this.getAttribute("data-latitude"));  // Convertir a número
+                let longitude = parseFloat(this.getAttribute("data-longitude"));  // Convertir a número
+
+                document.getElementById("locationId").value = id;
+                document.getElementById("id_cliente").value = clienteId;  // Asignar cliente
+                document.getElementById("id_latitude").value = isNaN(latitude) ? "" : latitude;  // Verificar si es número válido
+                document.getElementById("id_longitude").value = isNaN(longitude) ? "" : longitude;  // Verificar si es número válido
+            });
+        });
+    });
+</script>
 {% endblock %}

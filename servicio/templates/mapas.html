@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<br>
+<style>
+    #map { width: 100%; height: 400px;
+            border: 1px solid #ccc; 
+            border-radius: 20px;}
+    #boton-ruta {  }
+</style>
+
+<div class="font container-fluid p-lg-5 py-5 cont-pange">
+    <h2 class="title pb-3">Seleccionar Rutas</h2>
+    <div class="row pb-3">
+        <div class="col-lg-6 col-12  mb-lg-0 mb-2">
+            <select class="form-select " id="ruta-select">
+                {% for ruta in rutas %}
+                    <option  value="{{ ruta.id }}" {% if ruta.id|stringformat:"s" == request.GET.ruta_id %}selected{% endif %}>
+                        {{ ruta.ruta }}
+                    </option>
+                {% endfor %}
+            </select>
+           
+        </div>
+        <div class="col-lg-5 col-12">
+            <div class="input-group">
+                <button id="boton-ruta " class="btn  btn-success" onclick="mostrarRuta()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pin-angle" viewBox="0 0 16 16">
+                        <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a6 6 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707s.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a6 6 0 0 1 1.013.16l3.134-3.133a3 3 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146m.122 2.112v-.002zm0-.002v.002a.5.5 0 0 1-.122.51L6.293 6.878a.5.5 0 0 1-.511.12H5.78l-.014-.004a5 5 0 0 0-.288-.076 5 5 0 0 0-.765-.116c-.422-.028-.836.008-1.175.15l5.51 5.509c.141-.34.177-.753.149-1.175a5 5 0 0 0-.192-1.054l-.004-.013v-.001a.5.5 0 0 1 .12-.512l3.536-3.535a.5.5 0 0 1 .532-.115l.096.022c.087.017.208.034.344.034q.172.002.343-.04L9.927 2.028q-.042.172-.04.343a1.8 1.8 0 0 0 .062.46z"/>
+                    </svg>
+                    Ruta Corta
+                </button>
+                <a class="btn btn-outline-success " href="{% url 'mapas' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                        <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                    </svg>
+                    Puntos
+                </a>
+            </div>
+          
+        </div>
+      
+    </div>
+    <div id="map"></div>
+
+    <!-- Datos de todas las ubicaciones -->
+    {{ locations|json_script:"locations-data" }}
+    
+    <!-- Si se ha calculado la ruta óptima, se envía este bloque -->
+    {% if ruta_optima %}
+        {{ ruta_optima|json_script:"ruta-optima-data" }}
+    {% endif %}
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    
+    <script>
+    window.MEDIA_URL = '/media/';
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        var allLocations = JSON.parse(document.getElementById('locations-data').textContent);
+        var center = allLocations.length ? [allLocations[0].latitude, allLocations[0].longitude] : [0, 0];
+        window.map = L.map('map').setView(center, 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(window.map);
+        
+        window.markersLayer = L.layerGroup().addTo(window.map);
+        
+        allLocations.forEach(function(loc) {
+            var popupContent = "<div style='text-align: center;'>" +
+                               "<strong>Negocio: " + loc['cliente__negocio'] + "</strong><br/>" +
+                               "<strong>Dueño: " + loc['cliente__usuario__nombre'] + " " + loc['cliente__usuario__apellido'] + "</strong><br/>" +
+                               "<strong>Ruta: " + loc['ruta__ruta'] + "</strong><br/>" +
+                               "<img src='" + window.MEDIA_URL + loc['cliente__imagen'] + 
+                                            "' alt='Imagen del negocio' style='width:150px;'/>";
+                               "<strong>Ruta: " + loc['ruta__ruta'] +
+                               "</div>";
+            var marker = L.marker([loc.latitude, loc.longitude]).bindPopup(popupContent);
+            window.markersLayer.addLayer(marker);
+        });
+    });
+    
+    function mostrarRuta() {
+        var rutaSelect = document.getElementById("ruta-select");
+        var ruta_id = rutaSelect.value;
+        window.location.href = window.location.pathname + "?ruta_id=" + ruta_id + "&mostrar_ruta=1";
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        if (document.getElementById('ruta-optima-data')) {
+            var rutaOptima = JSON.parse(document.getElementById('ruta-optima-data').textContent);
+            if (rutaOptima.length > 0) {
+                if (window.markersLayer) {
+                    window.map.removeLayer(window.markersLayer);
+                }
+                var waypoints = rutaOptima.map(function(loc) {
+                    return L.latLng(loc.latitude, loc.longitude);
+                });
+                L.Routing.control({
+                    waypoints: waypoints,
+                    router: new L.Routing.OSRMv1({
+                        serviceUrl: 'https://router.project-osrm.org/route/v1'
+                    }),
+                    routeWhileDragging: false,
+                    addWaypoints: false,
+                    draggableWaypoints: false,
+                    fitSelectedRoutes: true,
+                    lineOptions: {
+                        styles: [{color: 'orange', opacity: 1, weight: 5}]
+                    },
+                    createMarker: function(i, waypoint, n) {
+                        var loc = rutaOptima[i];
+                        var popupContent = "<div style='text-align: center;'>";
+                        popupContent += "<strong>Negocio: " + loc['cliente__negocio'] + "</strong><br/>";
+                        if (loc['ruta__ruta']) {
+                            popupContent += "<strong>Ruta: " + loc['ruta__ruta'] + "</strong><br/>";
+                        }
+                        if (loc['cliente__imagen']) {
+                            popupContent += "<img src='" + window.MEDIA_URL + loc['cliente__imagen'] + 
+                                            "' alt='Imagen del negocio' style='width:150px;'/>";
+                        }
+                        popupContent += "</div>";
+                        return L.marker(waypoint.latLng).bindPopup(popupContent);
+                    }
+                }).addTo(window.map);
+            }
+        }
+    });
+    </script>
+
+</div>
+
+{% endblock %}

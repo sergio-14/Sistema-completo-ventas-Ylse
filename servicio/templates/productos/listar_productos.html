@@ -1,32 +1,44 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 <br>
-<div class="container-fluid p-5 cont-pange">
-    <h2 class="title pb-3">Productos Retornables</h2>
-    <div class="text-end">
-        <a href="{% url 'crear_producto_retornable' %}" class="btn btn-outline-success">
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
-                <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
-            </svg>
-            Crear Producto Retornable
-        </a>
-        <a href="{% url 'crear_producto' %}" class="btn btn-outline-success">
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
-                <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
-            </svg>
-            Crear Producto
-        </a>
+<div class="container-fluid p-lg-5 py-5 font cont-pange">
+    <div class="row">
+        <div class="col-lg-9 col-12 order-2 order-lg-1">
+            <h2 class="title pb-lg-3">Productos Retornables</h2>
+            <div class="pt-lg-5">
+                <!-- Botón para abrir el modal de creación de Producto Retornable -->
+                <button type="button" class="mb-2 mt-lg-0 btn btn-success btn-sm me-2" 
+                        data-bs-toggle="modal" data-bs-target="#modalProductoRetornable"
+                        onclick="openCreateProductoRetornable()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+                            <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+                        </svg>
+                    Crear Producto Retornable
+                </button>
+                <!-- Botón para abrir el modal de creación de Producto No Retornable -->
+                <button type="button" class="btn btn-success btn-sm" 
+                        data-bs-toggle="modal" data-bs-target="#modalProductoNoRetornable"
+                        onclick="openCreateProductoNoRetornable()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+                            <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+                        </svg>
+                    Crear Producto No Retornable
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-3 col-12 order-1 order-lg-2 justify-content-end text-end">
+            <img src="{% static 'img/logopie.png' %}" alt="Descripción de la imagen" style="height: 160px;" class="img-fluid">
+        </div>
     </div>
-
+    
     <!-- Tabla de Productos Retornables -->
-    <table class="table table-striped">
-        <thead>
+    <table class="table table-striped mt-2 text-center">
+        <thead class="table-color">
             <tr>
-                <th>ID</th>
-                <th>Descripción</th>
+                <th>Codigo Registro</th>
                 <th>Tipo Producto</th>
                 <th>Estado</th>
                 <th>Precio</th>
@@ -36,51 +48,52 @@
         <tbody>
             {% for producto in page_retornables %}
             <tr>
-                <td>{{ producto.id }}</td>
-                <td>{{ producto.descripcion }}</td>
-                <td>{{ producto.tipo_producto }}</td>
-                <td>{{ producto.estado }}</td>
-                <td>{{ producto.precio }}</td>
-                <td>
-                    <a class=" btn btn-outline-warning btn-sm" href="{% url 'editar_producto_retornable' producto.pk %}">
+                <td data-label="Descripción">{{ producto.descripcion }}</td>
+                <td data-label="tipo Producto">{{ producto.tipo_producto }}</td>
+                <td data-label="estado">{{ producto.estado }}</td>
+                <td data-label="precio">{{ producto.precio }} Bs.</td>
+                <td data-label="accion">
+                    <!-- Botón de Editar para Producto Retornable -->
+                    <button type="button" class="btn btn-warning btn-sm text-white" 
+                            data-bs-toggle="modal" data-bs-target="#modalProductoRetornable"
+                            data-id="{{ producto.pk }}"
+                            data-tipo="{{ producto.tipo_producto.pk }}"
+                            data-descripcion="{{ producto.descripcion }}"
+                            data-precio="{{ producto.precio }}"
+                            data-estado="{{ producto.estado }}"
+                            onclick="openEditProductoRetornable(this)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                         </svg>
                         Editar
-                    </a>
-                    
+                    </button>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
     <!-- Paginación de Productos Retornables -->
-    <div class="pagination justify-content-end">
+    <div class="pagination justify-content-end px-1">
         <span class="step-links">
             {% if page_retornables.has_previous %}
-                <a class="btn btn-secondary btn-sm" href="?page_retornables=1">&laquo; primera</a>
                 <a class="btn btn-secondary btn-sm" href="?page_retornables={{ page_retornables.previous_page_number }}">anterior</a>
             {% endif %}
-            
             <span class="current">
-                Página {{ page_retornables.number }} de {{ page_retornables.paginator.num_pages }}.
+                Página {{ page_retornables.number }} de {{ page_retornables.paginator.num_pages }}
             </span>
-            
             {% if page_retornables.has_next %}
                 <a class="btn btn-secondary btn-sm" href="?page_retornables={{ page_retornables.next_page_number }}">siguiente</a>
-                <a class="btn btn-secondary btn-sm" href="?page_retornables={{ page_retornables.paginator.num_pages }}">última &raquo;</a>
             {% endif %}
         </span>
     </div>
-
-    <h2 class="title py-4">Productos</h2>
-    <!-- Tabla de Productos -->
-    <table class="table table-striped">
-        <thead>
+    <br>
+    <hr>
+    <h2 class="title py-4">Productos No Retornables</h2>
+    <!-- Tabla de Productos No Retornables -->
+    <table class="table table-striped text-center">
+        <thead class="table-color">
             <tr>
-                <th>ID</th>
                 <th>Tipo Producto</th>
                 <th>Stock</th>
                 <th>Precio</th>
@@ -90,42 +103,148 @@
         <tbody>
             {% for producto in page_productos %}
             <tr>
-                <td>{{ producto.id }}</td>
-                <td>{{ producto.tipo_producto }}</td>
-                <td>{{ producto.stock }}</td>
-                <td>{{ producto.precio }}</td>
-                <td>
-                    <a class="btn btn-outline-warning btn-sm" href="{% url 'editar_producto' producto.pk %}">
+                <td data-label="tipo Producto">{{ producto.tipo_producto }}</td>
+                <td data-label="stock">{{ producto.stock }}</td>
+                <td data-label="Precio">{{ producto.precio }} Bs.</td>
+                <td data-label="accion">
+                    <!-- Botón de Editar para Producto No Retornable -->
+                    <button type="button" class="btn btn-warning btn-sm text-white" 
+                            data-bs-toggle="modal" data-bs-target="#modalProductoNoRetornable"
+                            data-id="{{ producto.pk }}"
+                            data-tipo="{{ producto.tipo_producto.pk }}"
+                            data-precio="{{ producto.precio }}"
+                            data-stock="{{ producto.stock }}"
+                            onclick="openEditProductoNoRetornable(this)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                         </svg>
                         Editar
-                    </a>
+                    </button>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <!-- Paginación de Productos -->
-    <div class="pagination justify-content-end">
+    <!-- Paginación de Productos No Retornables -->
+    <div class="pagination justify-content-end px-1">
         <span class="step-links">
             {% if page_productos.has_previous %}
-                <a class="btn btn-secondary btn-sm" href="?page_productos=1">&laquo; primera</a>
                 <a class="btn btn-secondary btn-sm" href="?page_productos={{ page_productos.previous_page_number }}">anterior</a>
             {% endif %}
-            
             <span class="current">
-                Página {{ page_productos.number }} de {{ page_productos.paginator.num_pages }}.
+                Página {{ page_productos.number }} de {{ page_productos.paginator.num_pages }}
             </span>
-            
             {% if page_productos.has_next %}
                 <a class="btn btn-secondary btn-sm" href="?page_productos={{ page_productos.next_page_number }}">siguiente</a>
-                <a class="btn btn-secondary btn-sm" href="?page_productos={{ page_productos.paginator.num_pages }}">última &raquo;</a>
             {% endif %}
         </span>
     </div>
 </div>
+
+<!-- Modal para Producto Retornable (Crear/Editar) -->
+<div class="modal fade" id="modalProductoRetornable" tabindex="-1" aria-labelledby="modalProductoRetornableLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background-color:rgb(241, 241, 241);">
+      <form method="POST" action="{% url 'listar_productos' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="producto_retornable">
+        <!-- Campo oculto para el id -->
+        <input type="hidden" name="producto_retornable_id" id="producto_retornable_id" value="">
+        <div class="modal-header">
+          <h5 class="modal-title text" id="modalProductoRetornableLabel">Crear Producto Retornable</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          {{ form_retornable.as_p }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-dark btn-sm">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Producto No Retornable (Crear/Editar) -->
+<div class="modal fade" id="modalProductoNoRetornable" tabindex="-1" aria-labelledby="modalProductoNoRetornableLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background-color:rgb(241, 241, 241);">
+      <form method="POST" action="{% url 'listar_productos' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="producto_no_retornable">
+        <!-- Campo oculto para el id -->
+        <input type="hidden" name="producto_no_retornable_id" id="producto_no_retornable_id" value="">
+        <div class="modal-header">
+          <h5 class="modal-title text" id="modalProductoNoRetornableLabel">Crear Producto No Retornable</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          {{ form_no_retornable.as_p }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-dark btn-sm">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts para rellenar los formularios de edición -->
+<script>
+  // Función para editar Producto Retornable
+  function openEditProductoRetornable(btn) {
+      const id = btn.getAttribute('data-id');
+      const tipo = btn.getAttribute('data-tipo');
+      const descripcion = btn.getAttribute('data-descripcion');
+      const precio = parseFloat(btn.getAttribute('data-precio')) || 0;
+      const estado = btn.getAttribute('data-estado');
+      
+      const modal = document.getElementById("modalProductoRetornable");
+      modal.querySelector('input[name="producto_retornable_id"]').value = id;
+      modal.querySelector('#modalProductoRetornableLabel').innerText = "Editar Producto Retornable";
+      modal.querySelector('#id_producto_retornable_tipo').value = tipo;
+      modal.querySelector('#id_producto_retornable_precio').value = precio;
+      modal.querySelector('#id_producto_retornable_descripcion').value = descripcion;
+      modal.querySelector('#id_producto_retornable_estado').value = estado;
+  }
+  
+  // Función para editar Producto No Retornable
+  function openEditProductoNoRetornable(btn) {
+      const id = btn.getAttribute('data-id');
+      const tipo = btn.getAttribute('data-tipo');
+      const precio = parseFloat(btn.getAttribute('data-precio')) || 0;
+      const stock = parseFloat(btn.getAttribute('data-stock')) || 0;
+      
+      const modal = document.getElementById("modalProductoNoRetornable");
+      modal.querySelector('input[name="producto_no_retornable_id"]').value = id;
+      modal.querySelector('#modalProductoNoRetornableLabel').innerText = "Editar Producto No Retornable";
+      modal.querySelector('#id_producto_no_retornable_tipo').value = tipo;
+      modal.querySelector('#id_producto_no_retornable_precio').value = precio;
+      modal.querySelector('#id_producto_no_retornable_stock').value = stock;
+  }
+  
+  // Funciones para reiniciar el modal a "crear"
+  function openCreateProductoRetornable() {
+      const modal = document.getElementById("modalProductoRetornable");
+      modal.querySelector('input[name="producto_retornable_id"]').value = "";
+      modal.querySelector('#modalProductoRetornableLabel').innerText = "Crear Producto Retornable";
+      modal.querySelector('#id_producto_retornable_tipo').value = "";
+      modal.querySelector('#id_producto_retornable_precio').value = "";
+      modal.querySelector('#id_producto_retornable_descripcion').value = "";
+      modal.querySelector('#id_producto_retornable_estado').value = "";
+  }
+  
+  function openCreateProductoNoRetornable() {
+      const modal = document.getElementById("modalProductoNoRetornable");
+      modal.querySelector('input[name="producto_no_retornable_id"]').value = "";
+      modal.querySelector('#modalProductoNoRetornableLabel').innerText = "Crear Producto No Retornable";
+      modal.querySelector('#id_producto_no_retornable_tipo').value = "";
+      modal.querySelector('#id_producto_no_retornable_precio').value = "";
+      modal.querySelector('#id_producto_no_retornable_stock').value = "";
+  }
+</script>
 
 {% endblock %}

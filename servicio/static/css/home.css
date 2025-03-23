@@ -241,13 +241,23 @@ body.dark-theme .column{
   font-size: 84px;
   
 }
+
+.sesion{
+  color: #f3f3f3;
+  /* -webkit-text-stroke: 2px rgb(255, 221, 176);  */
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-size: 34px;
+  
+}
+
 .texto{
   color: rgb(165, 124, 100);
   font-family: "Acme", sans-serif;
   font-weight: 400;
   width: 520px;
   font-style: normal;
-  font-size: 30px;
+  font-size: 23px;
   
 } 
 
@@ -310,6 +320,9 @@ body.dark-theme .column{
   width: auto; /* Asegura que la proporción de la imagen no se distorsione */
 }
 
+
+
+
 footer {
   position: relative;
   height: 150px; /* Ajusta el alto del footer según lo necesites */
@@ -353,6 +366,9 @@ footer {
 
 /* Para pantallas pequeñas (móviles) */
 @media (max-width: 767px) {
+  .flecha2{
+    display: none;
+  }
   .textitle {
     width: auto;
     font-size: 58px;
@@ -369,6 +385,7 @@ footer {
     height: 500px; 
     
   }
+  
   .home-content {
     position: absolute;
     top: 400px;
@@ -393,12 +410,7 @@ footer {
   .espiga{
     display: none;
   }
-  .flecha2 {
-    top: -60px; 
-    left: 20px; 
-    transform: rotate(70deg); 
-    width: 100px; 
-  }
+  
   .subtitle{
     text-align: center;
     font-weight: 400;

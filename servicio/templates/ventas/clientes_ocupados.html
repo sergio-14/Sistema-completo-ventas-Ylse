@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<br>
+<div class="font cont-pange container-fluid p-lg-5 py-5">
+    <div class="row">
+        <div class="col-lg-9 col-12 order-2 order-lg-1">
+            <h2 class="title pt-lg-3">Registro de Productos Retornables en Uso</h2>
+            <div class="pt-lg-5">
+            </div>
+        </div>
+        <div class="col-lg-3 col-12 order-1 order-lg-2 justify-content-end text-end">
+            <img src="{% static 'img/logopie.png' %}" alt="Descripción de la imagen" style="height: 160px;" class="img-fluid">
+        </div>
+    </div>
+  
+    <div class=" pt-2">
+        <table class="table table-striped text-center ">
+            <thead class="table-color">
+                <tr>
+           
+                    <th>Negocio</th>
+                    <th>Propietario</th>
+                    <th>Contacto</th>
+                    <th>Últimos Productos Ocupados</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in clientes_productos %}
+                    <tr>
+                        
+                        <td data-label="negocio">{{ entry.cliente.negocio }}</td>
+                        <td data-label="cliente">{{ entry.cliente.usuario.nombre }} {{ entry.cliente.usuario.apellido }} {{ entry.cliente.usuario.apellidoM }}</td>
+                        <td data-label="telefono">{{ entry.cliente.contacto }}</td>
+                        <td data-label="productos" class="text-start">
+                            <ul>
+                                {% for producto in entry.productos %}
+                                    <li>
+                                        {{ producto.descripcion }} - Estado: {{ producto.estado }} - Tipo: {{ producto.tipo }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No hay registros con productos ocupados.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+

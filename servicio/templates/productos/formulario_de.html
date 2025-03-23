@@ -2,12 +2,25 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <br>
-<div class="text container-fluid p-5 cont-pange">
-    <h2 class="title ">{% if form.instance.pk %}Editar{% else %}Crear{% endif %} Producto</h2>
+<div class=" col-lg-10 font container-fluid p-5 cont-pange">
+    <h2 class="title pb-3 ">{% if form.instance.pk %}Editar{% else %}Crear{% endif %} Producto</h2>
     <form method="post">
     {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
+    <div class="row pb-4">
+     
+        <div class="col-md-5">
+            {{ form.tipo_producto|as_crispy_field }}
+        </div>
+        <div class="col-md-2">
+            {{ form.stock|as_crispy_field }}
+        </div>
+        <div class="col-md-2">
+            {{ form.precio|as_crispy_field }}
+        </div>
+    </div>
+    {% comment %} {{ form|crispy }} {% endcomment %}
+    <button type="submit" class="btn btn-dark me-2">{% if form.instance.pk %}Actualizar Datos{% else %}Guardar Datos{% endif %}</button>
+    <a href="{% url 'listar_productos' %}" class="btn btn-secondary">Cancelar registro</a>
 </form>
 </div>
 {% endblock %}

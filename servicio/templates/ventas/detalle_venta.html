@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Detalles de la Venta</h2>
+    <div class="card mb-3">
+        <div class="card-header">
+            <strong>Venta ID:</strong> {{ venta.id }} | 
+            <strong>Cliente:</strong> {{ venta.cliente.negocio }} |
+            <strong>Empleado:</strong> {{ venta.empleado }} |
+            <strong>Fecha:</strong> {{ venta.fecha }}
+            <strong>deuda anterior:</strong> {{ venta.deuda_anterior }}
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in detalles %}
+                    <tr>
+                        <td>
+                            {% if detalle.producto_no_retornable %}
+                                {{ detalle.producto_no_retornable }}
+                            {% else %}
+                                {{ detalle.producto_retornable }}
+                            {% endif %}
+                        </td>
+                        <td>{{ detalle.cantidad }}</td>
+                        <td>{{ detalle.precio }}</td>
+                        <td>{{ detalle.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

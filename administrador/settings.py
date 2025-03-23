@@ -89,6 +89,10 @@ DATABASES = {
 }
 
 
+LOGIN_URL = 'login'  # Ruta al login
+LOGIN_REDIRECT_URL = 'dashboard'  # Ruta tras iniciar sesión
+LOGOUT_REDIRECT_URL = 'home'  # Ruta tras cerrar sesión
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -113,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/La_Paz'
 
 USE_I18N = True
 
@@ -126,8 +130,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = BASE_DIR,'servicio/static'
 
-MEDIA_URL = '/Media/'
-MEDIA_ROOT = BASE_DIR/'Media'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR/'media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

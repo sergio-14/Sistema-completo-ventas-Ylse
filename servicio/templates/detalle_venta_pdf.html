@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Venta </title>
+    <style>
+        body { font-family: sans-serif; }
+        .titulo { text-align: center;
+            font-size: 20px;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #333; }
+        th, td { padding: 8px; text-align: left; 
+            font-size: 14px;
+        }
+        .datos{
+            font-size: 15px;
+        }
+        .datosa{
+            font-size: 15px;
+            text-align: right; 
+        }
+        .cont{
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="titulo">Detalle de Venta </h1>
+    <p class="datosa"><strong>Fecha:</strong> {{ venta.fecha }}</p>
+    <p class="datos"><strong>Cliente:</strong> {{ venta.cliente.negocio }}</p>
+    <p class="datos"><strong>Empleado:</strong> {{ venta.empleado }}</p>
+    <p class="datos"><strong>Anticipo:</strong> {{ venta.anticipo }} Bs.</p>
+    <p class="datos"><strong>Saldo Pendiente:</strong> {{ venta.saldo_pendiente }} Bs.</p>
+    
+    <h2 class="titulo">Detalle de Productos Adquiridos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th class="cont">Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in detalles %}
+            <tr>
+                <td>
+                    {% if detalle.producto_no_retornable %}
+                        {{ detalle.producto_no_retornable }}
+                    {% elif detalle.producto_retornable %}
+                        {{ detalle.producto_retornable }}
+                    {% else %}
+                        Producto desconocido
+                    {% endif %}
+                </td>
+                <td>{{ detalle.cantidad }} Unidad</td>
+                <td>{{ detalle.precio }} Bs.</td>
+                <td>{{ detalle.subtotal }} Bs.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="datosa"><strong>Deuda Anterior:</strong> {{ venta.deuda_anterior }} Bs.</p>
+    
+    <p class="datosa"><strong>Total:</strong> {{ venta.total }} Bs.</p>
+    
+    
+</body>
+</html>

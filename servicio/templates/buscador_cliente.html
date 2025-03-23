@@ -1,0 +1,61 @@
+<!-- buscador_cliente.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Pago</title>
+</head>
+<body>
+    <h2>Buscar Cliente</h2>
+    <input type="text" id="buscador-negocio" placeholder="Ingrese nombre del negocio">
+    <button id="buscar-cliente">Buscar Cliente</button>
+    
+    <div id="info-cliente" style="display:none; margin-top:20px;">
+        <p><strong>Negocio:</strong> <span id="cliente-negocio"></span></p>
+        <p><strong>Saldo Pendiente:</strong> <span id="cliente-saldo"></span></p>
+        <p><strong>Deuda Anterior:</strong> <span id="cliente-deuda"></span></p>
+    </div>
+    
+    <h2>Registrar Pago (Venta sin productos)</h2>
+    <form method="POST" action="{% url 'registrar_pago' %}">
+        {% csrf_token %}
+        <!-- Campo oculto para almacenar el id del cliente -->
+        <input type="hidden" name="cliente_id" id="cliente_id">
+        
+        <label for="anticipo">Monto a abonar:</label>
+        <input type="number" step="0.01" name="anticipo" id="anticipo" required>
+        
+        <!-- Opcional: mostrar los saldos actuales (solo lectura) -->
+        <input type="hidden" name="saldo_actual" id="saldo_actual">
+        <input type="hidden" name="deuda_actual" id="deuda_actual">
+        
+        <button type="submit">Registrar Pago</button>
+    </form>
+    
+    <script>
+        document.getElementById('buscar-cliente').addEventListener('click', function() {
+            var negocio = document.getElementById('buscador-negocio').value;
+            if (!negocio) {
+                alert("Por favor, ingresa el nombre del negocio");
+                return;
+            }
+            fetch('/buscador-cliente/?negocio=' + encodeURIComponent(negocio))
+                .then(response => response.json())
+                .then(data => {
+                    if(data.error) {
+                        alert(data.error);
+                    } else {
+                        document.getElementById('cliente-negocio').textContent = data.negocio;
+                        document.getElementById('cliente-saldo').textContent = data.saldo_pendiente;
+                        document.getElementById('cliente-deuda').textContent = data.deuda_anterior;
+                        document.getElementById('cliente_id').value = data.cliente_id;
+                        document.getElementById('saldo_actual').value = data.saldo_pendiente;
+                        document.getElementById('deuda_actual').value = data.deuda_anterior;
+                        document.getElementById('info-cliente').style.display = 'block';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

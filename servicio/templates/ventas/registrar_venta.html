@@ -1,0 +1,346 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<br>
+<div class="font cont-pange container-fluid p-lg-5 py-5">
+    <!-- Se agrega un id al formulario para poder capturarlo en JS -->
+    <form method="post" id="venta-form">
+        {% csrf_token %}
+        <h3 class="title">Registro de Venta</h3>
+        <!-- Contenedor para mensajes de error -->
+        <div id="alert-container" style="margin-bottom: 15px;"></div>
+        <div class="row pt-lg-5 pt-1">
+            <div class="col-md-5 col-12">
+                <h5 class="text">Agregar Datos</h5>
+                <hr>
+                <!-- Fila de selección de cliente y anticipo -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-1">
+                            <label for="id_cliente" class="form-label">{{ form.cliente.label }}</label>
+                            {{ form.cliente|add_class:"form-select" }}
+                            {% if form.cliente.errors %}
+                                <div class="text-danger">{{ form.cliente.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-1 mt-2">
+                            {{ form.anticipo.label_tag }}
+                            {{ form.anticipo|add_class:"form-control" }}
+                            {% if form.anticipo.errors %}
+                                <div class="text-danger">{{ form.anticipo.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">       
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            {{ form.saldo_pendiente|add_class:"form-control" }}
+                            {% if form.saldo_pendiente.errors %}
+                                <div class="text-danger">{{ form.saldo_pendiente.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-1">
+                            {{ form.deuda_anterior|add_class:"form-control" }}
+                            {% if form.deuda_anterior.errors %}
+                                <div class="text-danger">{{ form.deuda_anterior.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-1">
+                            {{ form.total|add_class:"form-control" }}
+                            {% if form.total.errors %}
+                                <div class="text-danger">{{ form.total.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buscador y selección de productos -->
+                <div class="mb-3">
+                    <label for="search" class="form-label">Buscar Producto</label>
+                    <input type="text" id="search" class="form-control" oninput="filterProducts()" placeholder="Buscar por descripción o tipo">
+                </div>
+
+                <div class="scroll-container mb-2" id="productos">
+                    <!-- Productos no retornables -->
+                    {% for producto in productos_no_retornables %}
+                    <div class="row m-1 ">
+                        <div class="form-check producto mt-lg-2 mt-0 col-lg-8 col-12">
+                            <input type="checkbox" class="form-check-input" name="producto_no_retornable_{{ producto.id }}" 
+                                   id="producto_no_retornable_{{ producto.id }}" data-precio="{{ producto.precio }}" 
+                                   data-descripcion="{{ producto.tipo_producto.nombre }}" data-stock="{{ producto.stock }}"
+                                   onchange="handleCheckboxChange('producto_no_retornable_{{ producto.id }}')">
+                            <label class="form-check-label" for="producto_no_retornable_{{ producto.id }}">
+                                {{ producto.tipo_producto.nombre }}
+                            </label>
+                        </div>
+                        <div class="col-lg-4 col-12">
+                            <label for="cantidad_no_retornable_{{ producto.id }}" hidden class="form-label">Cantidad:</label>
+                            <input type="number" class="form-control" name="cantidad_no_retornable_{{ producto.id }}" 
+                                   id="cantidad_no_retornable_{{ producto.id }}" min="0" value="0"
+                                   data-stock="{{ producto.stock }}"
+                                   onchange="handleCantidadChange('producto_no_retornable_{{ producto.id }}')">
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Productos retornables -->
+                    {% for producto in productos_retornables %}
+                    <div class="row m-1">
+                        <div class="form-check producto mt-lg-2 mt-0 col-lg-8 col-12">
+                            <input type="checkbox" class="form-check-input" name="producto_retornable_{{ producto.id }}" 
+                                   id="producto_retornable_{{ producto.id }}" data-precio="{{ producto.precio }}" 
+                                   data-descripcion="{{ producto.descripcion }} ({{ producto.tipo_producto.nombre }})"
+                                   onchange="handleCheckboxChange('producto_retornable_{{ producto.id }}')">
+                            <label class="form-check-label" for="producto_retornable_{{ producto.id }}">
+                                {{ producto.descripcion }} ({{ producto.tipo_producto.nombre }})
+                            </label>
+                        </div>
+                        <div class="col-lg-4 col-12">
+                            <label for="cantidad_retornable_{{ producto.id }}" hidden class="form-label">Cantidad:</label>
+                            <input type="number" class="form-control" name="cantidad_retornable_{{ producto.id }}" 
+                                   id="cantidad_retornable_{{ producto.id }}" min="0" max="1" value="0"
+                                   onchange="handleCantidadChange('producto_retornable_{{ producto.id }}')">
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-dark btn-sm mt-3 mb-5 me-2">Registrar Venta</button>
+                <a class="btn btn-sm btn-outline-secondary mt-3 mb-5" href="{% url 'venta_list' %}">Cancelar Registro</a>
+            </div>
+            <div class="col-lg-7">
+                <h5 class="text">Detalle Venta</h5>
+                <hr>
+                <table class="table table-striped">
+                    <thead class="table-color">
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previsualizacion">
+                        <!-- Se llenan dinámicamente -->
+                    </tbody>
+                    <tfoot>
+                        <tr  class="bg-opacity-50 bg-warning text-dark">
+                            <td colspan="3" class="text-end"><strong>Deuda Anterior del Cliente: Bs.</strong></td>
+                            <td id="saldo-pendiente">0.00</td>
+                        </tr>
+                        <tr class="bg-opacity-25 bg-warning text-dark subtotal-total">
+                            <td colspan="3" class="text-end"><strong>Subtotal general: Bs.</strong></td>
+                            <td id="subtotal">0.00</td>
+                        </tr>
+                        <tr class="bg-opacity-50 bg-warning text-dark">
+                            <td colspan="3" class="text-end"><strong>Nueva Deuda del Cliente: Bs.</strong></td>
+                            <td id="nueva-saldo-pendiente">0.00</td>
+                        </tr>
+                        <tr class="bg-opacity-25 bg-warning text-dark">
+                            <td colspan="3" class="text-end"><strong>Total general: Bs.</strong></td>
+                            <td id="total-general">0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Scripts -->
+<script>
+    // Función para mostrar mensajes de error en el contenedor
+    function showError(message) {
+        const alertContainer = document.getElementById('alert-container');
+        alertContainer.innerHTML = `<div class="alert alert-danger" role="alert">${message}</div>`;
+        setTimeout(() => {
+            alertContainer.innerHTML = '';
+        }, 5000);
+    }
+
+    // Elementos del formulario y de la tabla
+    const anticipoInput = document.getElementById('id_anticipo');
+    const subtotalCell = document.getElementById('subtotal');
+    const saldoPendienteCell = document.getElementById('saldo-pendiente');
+    const nuevaSaldoCell = document.getElementById('nueva-saldo-pendiente');
+    const totalGeneralCell = document.getElementById('total-general');
+    const formTotalInput = document.getElementById('id_total');
+    const formSaldoInput = document.getElementById('id_saldo_pendiente');
+    const formDeudaInput = document.getElementById('id_deuda_anterior');
+
+    // Actualizar totales
+    function actualizarTotales() {
+        const subtotal = parseFloat(subtotalCell.textContent) || 0;
+        const saldoPendiente = parseFloat(saldoPendienteCell.textContent) || 0;
+        const anticipo = parseFloat(anticipoInput.value) || 0;
+
+        const totalGeneral = subtotal + saldoPendiente;
+        const nuevaDeuda = totalGeneral - anticipo;
+
+        totalGeneralCell.textContent = totalGeneral.toFixed(2);
+        nuevaSaldoCell.textContent = nuevaDeuda.toFixed(2);
+
+        if (formTotalInput) {
+            formTotalInput.value = totalGeneral.toFixed(2);
+        }
+        if (formSaldoInput) {
+            formSaldoInput.value = nuevaDeuda.toFixed(2);
+        }
+        if (formDeudaInput) {
+            formDeudaInput.value = saldoPendiente.toFixed(2);
+        }
+    }
+
+    anticipoInput.addEventListener('input', actualizarTotales);
+
+    // Obtener saldo pendiente del cliente
+    document.addEventListener('DOMContentLoaded', function () {
+        const clienteSelect = document.getElementById('id_cliente');
+        if (clienteSelect) {
+            clienteSelect.addEventListener('change', function () {
+                const clienteId = this.value;
+                if (clienteId) {
+                    fetch(`/ventas/saldo-cliente/${clienteId}/`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la solicitud: ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const saldoPendiente = data.saldo_pendiente || '0.00';
+                            saldoPendienteCell.textContent = parseFloat(saldoPendiente).toFixed(2);
+                            actualizarTotales();
+                        })
+                        .catch(error => {
+                            console.error('Error al obtener saldo pendiente:', error);
+                            saldoPendienteCell.textContent = '0.00';
+                            actualizarTotales();
+                        });
+                } else {
+                    saldoPendienteCell.textContent = '0.00';
+                    actualizarTotales();
+                }
+            });
+        } else {
+            console.warn("No se encontró el select de cliente con id='id_cliente'");
+        }
+
+        // Validar en el envío del formulario que se haya seleccionado al menos un producto
+        const form = document.getElementById('venta-form');
+        form.addEventListener('submit', function(e) {
+            const checkboxes = document.querySelectorAll('.producto input[type="checkbox"]');
+            let productoSeleccionado = false;
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    let inputId = '';
+                    // Si es no retornable, se busca el input de cantidad correspondiente
+                    if (checkbox.id.includes('producto_no_retornable')) {
+                        inputId = 'cantidad_no_retornable_' + checkbox.id.split('_').pop();
+                    } else if (checkbox.id.includes('producto_retornable')) {
+                        inputId = 'cantidad_retornable_' + checkbox.id.split('_').pop();
+                    }
+                    const cantidadInput = document.getElementById(inputId);
+                    if (cantidadInput && parseFloat(cantidadInput.value) > 0) {
+                        productoSeleccionado = true;
+                    }
+                }
+            });
+            if (!productoSeleccionado) {
+                e.preventDefault();
+                showError("Debe seleccionar al menos un producto con cantidad mayor a 0 para registrar la venta.");
+                return false;
+            }
+        });
+    });
+
+    // Función para filtrar productos
+    function filterProducts() {
+        const searchQuery = document.getElementById("search").value.toLowerCase();
+        const productos = document.querySelectorAll('.producto');
+        productos.forEach(function (producto) {
+            const description = producto.querySelector('label').textContent.toLowerCase();
+            const cantidadInput = producto.parentElement.querySelector('input[type="number"]');
+            if (description.includes(searchQuery)) {
+                producto.style.display = '';
+                if (cantidadInput) cantidadInput.style.display = '';
+            } else {
+                producto.style.display = 'none';
+                if (cantidadInput) cantidadInput.style.display = 'none';
+            }
+        });
+    }
+
+    // Funciones para manejar cambios y actualizar previsualización
+    function handleCheckboxChange(productId) {
+        updatePreview();
+        actualizarTotales();
+    }
+
+    function handleCantidadChange(productId) {
+        let inputId;
+        // Solo se realiza la validación de stock para productos no retornables
+        if (productId.includes('producto_no_retornable')) {
+            inputId = 'cantidad_no_retornable_' + productId.split('_').pop();
+            const cantidadInput = document.getElementById(inputId);
+            if (cantidadInput) {
+                const stockDisponible = parseFloat(cantidadInput.dataset.stock) || 0;
+                const cantidadIngresada = parseFloat(cantidadInput.value) || 0;
+                if (cantidadIngresada > stockDisponible) {
+                    showError(`No hay suficiente stock disponible. Stock actual: ${stockDisponible}`);
+                    cantidadInput.value = stockDisponible;
+                }
+            }
+        }
+        // Para productos retornables, no se valida stock
+        updatePreview();
+        actualizarTotales();
+    }
+
+    function updatePreview() {
+        const previewContainer = document.getElementById("previsualizacion");
+        previewContainer.innerHTML = '';
+        let subtotal = 0;
+        const productos = document.querySelectorAll('.producto');
+        productos.forEach(function (producto) {
+            const checkbox = producto.querySelector('input[type="checkbox"]');
+            const cantidadInput = producto.parentElement.querySelector('input[type="number"]');
+            if (checkbox && cantidadInput && checkbox.checked && cantidadInput.value > 0) {
+                const descripcion = producto.querySelector('label').textContent;
+                const cantidad = parseFloat(cantidadInput.value);
+                const precio = parseFloat(checkbox.dataset.precio);
+                // Si es no retornable, se valida el stock; de lo contrario, se omite la validación
+                if (checkbox.id.includes('producto_no_retornable')) {
+                    const stockDisponible = parseFloat(cantidadInput.dataset.stock) || 0;
+                    if (cantidad > stockDisponible) {
+                        showError(`No hay suficiente stock para ${descripcion}. Stock actual: ${stockDisponible}`);
+                        cantidadInput.value = stockDisponible;
+                        return;
+                    }
+                }
+                const subtotalProducto = cantidad * precio;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td data-label="proc.">${descripcion}</td>
+                    <td data-label="Cantidad">${cantidad}</td>
+                    <td data-label="Precio">${precio.toFixed(2)} Bs.</td>
+                    <td data-label="subtotal">${subtotalProducto.toFixed(2)} Bs.</td>
+                `;
+                previewContainer.appendChild(row);
+                subtotal += subtotalProducto;
+            }
+        });
+        subtotalCell.textContent = subtotal.toFixed(2);
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

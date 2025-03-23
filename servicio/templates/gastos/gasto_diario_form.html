@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1>{% if form.instance.pk %}Editar{% else %}Añadir{% endif %} Gasto Diario</h1>
-
-<form method="post" novalidate>
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">Guardar</button>
-    <a href="{% url 'venta_list' %}" class="btn btn-secondary">Cancelar</a>
-</form>
+<br>
+<div class=" col-lg-10  container-fluid font p-lg-5 py-5 cont-pange">
+    <h1 class="title ">{% if form.instance.pk %}Editar{% else %}Añadir{% endif %} Gasto Diario</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-dark btn-sm me-2">Guardar Datos</button>
+        <a href="{% url 'venta_list' %}" class="btn btn-secondary btn-sm">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

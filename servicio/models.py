@@ -73,7 +73,7 @@ class ProductoRetornable(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.descripcion} - ${self.precio:.2f}"
+        return f"{self.descripcion} - {self.precio:.2f}"
 
 class Producto(models.Model):  
     tipo_producto = models.ForeignKey(TipoProducto, on_delete=models.CASCADE)
@@ -93,31 +93,59 @@ class Cliente(models.Model):
     def __str__(self):
         return self.negocio
     
+class DivisionEmpleado(models.Model):
+    ruta = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.ruta
+    
 class Location(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, related_name='locacion')
     latitude = models.FloatField()
     longitude = models.FloatField()
+    ruta = models.ForeignKey(DivisionEmpleado, on_delete=models.SET_NULL, null=True, blank=True, related_name='locations')
+
 
     def __str__(self):
         return self.cliente.negocio
+ 
+    
+    
+class ProductoBase(models.Model):
+    tipo_producto = models.ForeignKey(TipoProducto, on_delete=models.CASCADE)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
 
+    class Meta:
+        abstract = True
 
-
-class DivisionEmpleado(models.Model):
-    nombre = models.CharField(max_length=50)
+class ProductonoRetornable(ProductoBase):
+    stock = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.tipo_producto.nombre}"
 
+class ProductosiRetornable(ProductoBase):
+    ESTADO_CHOICES = [
+        ('Disponible', 'Disponible'),
+        ('Ocupado', 'Ocupado'),
+        ('Dañado', 'Dañado'),
+    ]
+    descripcion = models.CharField(max_length=30)
+    estado = models.CharField(max_length=50, choices=ESTADO_CHOICES, default='Disponible')
 
+    def __str__(self):
+        return f"{self.descripcion} ({self.tipo_producto.nombre})"
+    
 class Empleado(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='empleado')
     domicilio = models.TextField()
     division = models.ForeignKey(DivisionEmpleado, on_delete=models.CASCADE)
+    productosasignados = models.ManyToManyField(ProductosiRetornable, blank=True)
    
     def __str__(self):
-        return f"{self.usuario.nombre} {self.usuario.apellido} - {self.division.nombre}"
-
+        return f"{self.usuario.nombre} - {self.division.ruta}"
+    
+    
 class GastoDiario(models.Model):
     fecha = models.DateField(auto_now_add=True)
     descripcion = models.CharField(max_length=255)
@@ -127,6 +155,68 @@ class GastoDiario(models.Model):
     def __str__(self):
         return f"{self.empleado}: {self.descripcion}"
     
+class RegistroVenta(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    anticipo = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    saldo_pendiente = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    deuda_anterior = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    class Meta:
+        ordering = ['-fecha']
+
+    def __str__(self):
+        return f"{self.cliente.negocio}"
+
+
+
+from django.core.exceptions import ValidationError
+
+class RegistroDetalleVenta(models.Model):
+    venta = models.ForeignKey('RegistroVenta', on_delete=models.CASCADE, related_name='detalles')
+    producto_no_retornable = models.ForeignKey(ProductonoRetornable, on_delete=models.CASCADE, null=True, blank=True)
+    producto_retornable = models.ForeignKey(ProductosiRetornable, on_delete=models.CASCADE, null=True, blank=True)
+    cantidad = models.PositiveIntegerField(default=0, blank=True, null=True)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)  # Precio al momento de la venta
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        # Validación de producto no retornable y cantidad válida
+        if self.producto_no_retornable and self.cantidad:
+            if self.producto_no_retornable.stock < self.cantidad:
+                raise ValidationError(f"No hay suficiente stock disponible. Stock actual: {self.producto_no_retornable.stock}")
+            
+            # Descontar stock solo cuando se está creando el registro
+            if not self.pk:
+                self.producto_no_retornable.stock -= self.cantidad
+                self.producto_no_retornable.save()
+
+        # Calcular subtotal automáticamente
+        self.subtotal = self.cantidad * self.precio
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Restaurar stock al eliminar el detalle de la venta
+        if self.producto_no_retornable and self.cantidad:
+            self.producto_no_retornable.stock += self.cantidad
+            self.producto_no_retornable.save()
+
+        super().delete(*args, **kwargs)
+
+    def __str__(self):
+        if self.producto_no_retornable:
+            return f"Venta {self.venta.id} - Producto {self.producto_no_retornable} x {self.cantidad}"
+        elif self.producto_retornable:
+            return f"Venta {self.venta.id} - Producto {self.producto_retornable} x {self.cantidad}"
+        else:
+            return f"Venta {self.venta.id} - Producto desconocido x {self.cantidad}"
+        
+        
+        
+        
+
 
 
 class Venta(models.Model):

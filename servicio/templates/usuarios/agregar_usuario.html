@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <br>
-<article class="container-fluid p-5 cont-pange">
+<article class="container-fluid p-lg-5 py-5 font cont-pange">
     <div class="container mt-4">
         <h2 class="mb-4 title ">Agregar Usuario</h2>
         <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
@@ -10,39 +10,65 @@
             
             <!-- Campos del formulario -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     {{ form.email|as_crispy_field }}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {{ form.nombre|as_crispy_field }}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-2">
                     {{ form.apellido|as_crispy_field }}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-2">
                     {{ form.apellidoM|as_crispy_field }}
                 </div>
-                <div class="col-md-4">
-                    {{ form.is_active|as_crispy_field }}
-                </div>
-                <div class="col-md-4">
-                    {{ form.is_staff|as_crispy_field }}
-                </div>
-                <div class="col-md-4">
-                    {{ form.is_superuser|as_crispy_field }}
-                </div>
-                <div class="col-md-6">
-                    {{ form.password1|as_crispy_field }}
-                </div>
-                <div class="col-md-6">
-                    {{ form.password2|as_crispy_field }}
-                </div>
                 <div class="row">
-                    <div class="col-md-3">
-                        {{ form.groups|as_crispy_field }}
+                    <div class="col-md-6 col-12">
+                        <div class="">
+                            {{ form.password1|as_crispy_field }}
+                        </div>
+                        <div class="">
+                            {{ form.password2|as_crispy_field }}
+                        </div>
+                        
                     </div>
-                    <div class="col-md-9">
-                        <div class="mb-3">
+                    <div class="col-md-6 col-12">
+                        <div class="row">
+                            <h6 class="pt-lg-2">Permisos</h6>
+                            <div class="col-md-6">
+                                {{ form.is_active|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.is_staff|as_crispy_field }}
+                               
+                            </div>
+                            <div class="col-md-12">
+                               {{ form.is_superuser|as_crispy_field }}
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3 text-center">
+                                    <label class="form-label">Tipo de Usuario:</label><br>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" name="tipo_usuario" value="cliente" id="cliente" class="form-check-input">
+                                        <label for="cliente" class="form-check-label">Cliente</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" name="tipo_usuario" value="empleado" id="empleado" class="form-check-input">
+                                        <label for="empleado" class="form-check-label">Empleado</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+               
+                <div class="row">
+                    {% comment %} <div class="col-md-3">
+                        {{ form.groups|as_crispy_field }}
+                    </div> {% endcomment %}
+                    <div class="col-md-12">
+                        {% comment %} <div class="mb-3">
                             <label class="form-label">Tipo de Usuario:</label><br>
                             <div class="form-check form-check-inline">
                                 <input type="radio" name="tipo_usuario" value="cliente" id="cliente" class="form-check-input">
@@ -52,7 +78,7 @@
                                 <input type="radio" name="tipo_usuario" value="empleado" id="empleado" class="form-check-input">
                                 <label for="empleado" class="form-check-label">Empleado</label>
                             </div>
-                        </div>
+                        </div> {% endcomment %}
                 
                         <!-- Cliente -->
                         <div id="cliente-fields" class="d-none">
@@ -94,9 +120,10 @@
                     </div>
                 </div>
                
-            </div>
+            </div><br>
             <!-- Botón de envío -->
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-dark btn-sm me-2">Guardar</button>
+            <a href="{% url 'listar_usuarios' %}" class="btn btn-outline-secondary btn-sm">Cancelar</a>
         </form>
     </div>
     

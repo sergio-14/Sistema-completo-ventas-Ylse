@@ -66,8 +66,8 @@ class CustomUserCreationForm(UserCreationForm):
             'is_superuser': forms.CheckboxInput(attrs={'class': 'form-check-input danger-switch', 'role': 'switch', 'id': 'flexSwitchCheckSuperuser'}),
             }
         labels = {
-            'apellido': 'Apellido Paterno',
-            'apellidoM': 'Apellido Materno',
+            'apellido': 'Apellido P.',
+            'apellidoM': 'Apellido M.',
         }
         
         
@@ -112,18 +112,40 @@ class CustomUserChangeForm(forms.ModelForm):
     
     class Meta:
         model = User
-        fields = ('email', 'nombre', 'apellido', 'apellidoM', 'imagen','dni', 'fecha_nac', 'is_active', 'is_staff','is_superuser', 'groups')
+        fields = ('email', 'nombre', 'apellido', 'apellidoM', 'imagen', 'dni', 'fecha_nac', 'is_active', 'is_staff', 'is_superuser', 'groups')
         widgets = {
             'imagen': CustomClearableFileInput(),
+            'fecha_nac': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch', 'id': 'flexSwitchCheckActive'}),
             'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch', 'id': 'flexSwitchCheckStaff'}),
             'is_superuser': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch', 'id': 'flexSwitchCheckSuperuser'}),
         }
         labels = {
+            'nombre': 'Nombres.',
             'apellido': 'Apellido Paterno',
             'apellidoM': 'Apellido Materno',
+            'fecha_nac': 'Fecha de Nacimiento',
         }
+
+
+class EmpleadorutForm(forms.ModelForm):
+    class Meta:
+        model = Empleado
+        fields = ['domicilio', 'division']  
+        labels = {
+            'division': 'Seleccionar Ruta',}
         
+        
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['negocio', 'contacto', 'imagen']
+        widgets = {
+            'negocio': forms.TextInput(attrs={'class': 'form-control'}),
+            'contacto': forms.TextInput(attrs={'class': 'form-control'}),
+            'imagen': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }        
+                     
 
 class VentaForm(forms.ModelForm):
     productos = forms.ModelMultipleChoiceField(
@@ -215,11 +237,11 @@ class EmpleadoForm(forms.ModelForm):
             'division': forms.Select(attrs={'class': 'form-control'}),
         }
         
-from .models import ProductoRetornable, Producto
+from .models import ProductosiRetornable, ProductonoRetornable, Producto
 
 class ProductoRetornableForm(forms.ModelForm):
     class Meta:
-        model = ProductoRetornable
+        model = ProductosiRetornable
         fields = ['descripcion', 'tipo_producto', 'estado', 'precio']
         widgets = {
             'descripcion': forms.TextInput(attrs={'class': 'form-control'}),
@@ -227,10 +249,16 @@ class ProductoRetornableForm(forms.ModelForm):
             'estado': forms.Select(attrs={'class': 'form-control'}),
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+        labels = {
+            'descripcion': 'codigo producto'
+        }
+        
+        
+
 
 class ProductoForm(forms.ModelForm):
     class Meta:
-        model = Producto
+        model = ProductonoRetornable
         fields = ['tipo_producto', 'stock', 'precio']
         widgets = {
             'tipo_producto': forms.Select(attrs={'class': 'form-control'}),
@@ -238,25 +266,160 @@ class ProductoForm(forms.ModelForm):
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
         }
         
+class ProductosiRetornableForm(forms.ModelForm):
+    class Meta:
+        model = ProductosiRetornable
+        fields = ['descripcion', 'tipo_producto', 'estado', 'precio']
+        widgets = {
+            'descripcion': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'id_producto_retornable_descripcion'
+            }),
+            'tipo_producto': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'id_producto_retornable_tipo'
+            }),
+            'estado': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'id_producto_retornable_estado'
+            }),
+            'precio': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'id_producto_retornable_precio'
+            }),
+        }
+        labels = {
+            'descripcion': 'Código Producto'
+        }
 
+
+class ProductonoRetornableForm(forms.ModelForm):
+    class Meta:
+        model = ProductonoRetornable
+        fields = ['tipo_producto', 'stock', 'precio']
+        widgets = {
+            'tipo_producto': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'id_producto_no_retornable_tipo'
+            }),
+            'stock': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'id_producto_no_retornable_stock'
+            }),
+            'precio': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'id_producto_no_retornable_precio'
+            }),
+        }
+        
+        
 from .models import TipoProducto, Location, DivisionEmpleado, GastoDiario
 
 class TipoProductoForm(forms.ModelForm):
     class Meta:
         model = TipoProducto
         fields = ['nombre']
+        labels = {
+            'nombre': 'Nombre del Tipo de Producto',
+        }
+        
+class CambiarEstadoForm(forms.Form):
+    productos = forms.ModelMultipleChoiceField(
+        queryset=ProductosiRetornable.objects.filter(estado="Ocupado"),
+        widget=forms.CheckboxSelectMultiple(),
+        required=True,
+        label="Selecciona los productos para cambiar su estado"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Personalizar los widgets de cada checkbox
+        self.fields["productos"].widget.attrs.update({"class": "form-check-input"})
+    
+from .models import Location, DivisionEmpleado
+
+class RutaForm(forms.Form):
+    location_inicial = forms.ModelChoiceField(queryset=Location.objects.all(), label="Ubicación Inicial")
+    numero_rutas = forms.IntegerField(min_value=1, max_value=5, label="Número de Rutas")
+    rutas = forms.ModelMultipleChoiceField(queryset=DivisionEmpleado.objects.all(), label="Seleccionar Rutas") 
 
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
-        fields = ['cliente', 'latitude', 'longitude']
+        fields = ['cliente', 'latitude', 'longitude','ruta']
 
 class DivisionEmpleadoForm(forms.ModelForm):
     class Meta:
         model = DivisionEmpleado
-        fields = ['nombre']
+        fields = ['ruta']
+        labels = {
+            'ruta': 'Ingresar Nueva Ruta',
+        }
 
 class GastoDiarioForm(forms.ModelForm):
     class Meta:
         model = GastoDiario
-        fields = ['descripcion', 'monto', 'empleado']
+        fields = ['descripcion', 'monto']
+        
+        
+
+
+from django import forms
+from decimal import Decimal
+from .models import Cliente, Empleado, ProductonoRetornable, ProductosiRetornable
+
+class RegistroVentaForm(forms.Form):
+    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), label="Cliente", required=True)
+    anticipo = forms.DecimalField(label="Anticipo", required=False, min_value=0, initial=Decimal('0.00'))
+    saldo_pendiente = forms.DecimalField(
+        label="Saldo Pendiente",
+        required=True,
+        min_value=0,
+        initial=Decimal('0.00'),
+        widget=forms.HiddenInput()  # Campo oculto
+    )
+    deuda_anterior = forms.DecimalField(
+        label="Deuda Anterior",
+        required=True,
+        min_value=0,
+        initial=Decimal('0.00'),
+        widget=forms.HiddenInput()  # Campo oculto
+    )
+    total = forms.DecimalField(
+        label="Total",
+        required=True,
+        min_value=0,
+        initial=Decimal('0.00'),
+        widget=forms.HiddenInput()  # Campo oculto
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Agregar dinámicamente los productos y sus cantidades al formulario
+        for producto in ProductonoRetornable.objects.all():
+            self.fields[f'producto_no_retornable_{producto.id}'] = forms.BooleanField(
+                required=False, label=f'{producto.tipo_producto.nombre} - ${producto.precio}'
+            )
+            self.fields[f'cantidad_no_retornable_{producto.id}'] = forms.IntegerField(
+                required=False, min_value=0, initial=0, label="Cantidad"
+            )
+
+        for producto in ProductosiRetornable.objects.all():
+            self.fields[f'producto_retornable_{producto.id}'] = forms.BooleanField(
+                required=False, label=f'{producto.descripcion} ({producto.tipo_producto.nombre}) - ${producto.precio}'
+            )
+            self.fields[f'cantidad_retornable_{producto.id}'] = forms.IntegerField(
+                required=False, min_value=0, initial=0, label="Cantidad"
+            )
+
+    def clean_anticipo(self):
+        anticipo = self.cleaned_data.get('anticipo')
+        return anticipo if anticipo else Decimal('0.00')
+    
+    
+class EmpleadoProductoForm(forms.ModelForm):
+    class Meta:
+        model = Empleado
+        fields = ['productosasignados']
+        widget=forms.CheckboxSelectMultiple(),

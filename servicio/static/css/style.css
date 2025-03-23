@@ -1,6 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Protest+Strike&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Acme&family=Lobster&family=Pacifico&family=Protest+Strike&display=swap');
 
+
+.font{
+    font-family: "oswald";
+    font-weight: 400;
+    font-style: normal;
+}
 .title{
     font-family: "Acme", cursive;
     font-weight: 400;
@@ -19,6 +25,32 @@
     font-style: normal;
 }
 
+
+/* Modifica la barra de scroll */
+::-webkit-scrollbar {
+    width: 5px; /* Ancho del scroll vertical */
+    height: 5px; /* Alto del scroll horizontal */
+  }
+  
+  /* Modifica el fondo del scroll */
+  ::-webkit-scrollbar-track {
+    background: #dadada;
+    border-radius: 10px;
+  }
+  
+  /* Modifica el pulgar del scroll */
+  ::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 10px;
+  }
+  
+  /* Cambia el pulgar cuando se pasa el cursor */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3d3d3d;
+  }
+  
+
+
 .bg-color{
     background-color: #a23002;
 }
@@ -29,6 +61,13 @@
     background: #e5e2e1;
     box-shadow: inset 16px 16px 20px #d0cecd,
             inset -16px -16px 20px #faf6f5;
+}
+.scroll-container {
+    height: 100px;
+    overflow-y: auto;
+    border: 1px solid rgb(175, 175, 175);
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .cont-pange{
@@ -44,6 +83,54 @@ body {
     background: #e5e2e1;
 }
 
+table {
+    --bs-table-color: unset !important;
+    --bs-table-bg: unset !important;
+}
+
+
+@media (min-width: 768px) {
+    #sidebar {
+        display: block; /* El sidebar está visible por defecto */
+    }
+
+    #mainNavbar {
+        margin-left: 250px; /* Ajustar el navbar para que no esté detrás del sidebar */
+    }
+
+    #content {
+        margin-left: 250px; /* Ajustar el contenido para que no esté detrás del sidebar */
+    }
+}
+
+/* Estilo para pantallas móviles */
+@media (max-width: 767px) {
+    #sidebar.hidden {
+        display: none; /* Ocultar el sidebar cuando tiene la clase "hidden" */
+    }
+
+    #mainNavbar {
+        width: 100%; /* El navbar ocupa todo el ancho en pantallas móviles */
+        margin-left: 0; /* El navbar no se desplaza, ocupa toda la pantalla */
+    }
+
+    #content {
+        margin-left: 0; /* El contenido ocupa todo el ancho en pantallas móviles */
+    }
+
+    .content-expanded {
+        margin-left: 0; /* El contenido se ajusta a la pantalla cuando el sidebar está oculto */
+    }
+
+    .content-collapsed {
+        margin-left: 0; /* El contenido también se ajusta cuando el sidebar está colapsado */
+    }
+}
+
+.table-color{
+    background-color: #a23002;
+    color: white;
+}
 .modal-bg{
     background: #e5e2e1;
 }

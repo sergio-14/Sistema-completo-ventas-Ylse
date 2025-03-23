@@ -3,10 +3,22 @@
 {% block content %}
 <br>
 <div class="text container-fluid p-5 cont-pange">
-    <h1>{{ object|default:"Crear Locación" }}</h1>
+    <h1>{{ object|default:"Crear Locación de Negocio" }}</h1>
     <form method="post">
+        
         {% csrf_token %}
-        {{ form|crispy }}
+        <div class="row">
+            <div class="col-md-8">
+                {{ form.cliente|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.latitude|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                {{ form.longitude|as_crispy_field }}
+            </div>
+        </div>
+        {% comment %} {{ form|crispy }} {% endcomment %}
         <button type="submit">Guardar</button>
     </form>
 </div>

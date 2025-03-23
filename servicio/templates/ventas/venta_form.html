@@ -6,11 +6,11 @@
 <div class="text cont-pange container-fluid p-5">
     <form method="post">
         {% csrf_token %}
-        <h3>Registro de Venta</h3>
+        <h3 class="title ">Registro de Venta</h3>
         <div class="row">
             <div class="col-md-7">
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         <div class="mb-3">
                             {{ form.cliente.label_tag }}
                             {{ form.cliente|add_class:"form-select" }}
@@ -19,10 +19,13 @@
                             {% endif %}
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="mb-3">
-                            <label>Deuda: </label>
-                            <input type="text" id="saldo-pendiente" class="form-control" readonly>
+                            {{ form.anticipo.label_tag }}
+                            {{ form.anticipo|add_class:"form-control" }}
+                            {% if form.anticipo.errors %}
+                                <div class="text-danger">{{ form.anticipo.errors }}</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -69,27 +72,11 @@
                     </div>
                 </div>
                 <br>
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="mb-3">
-                            {{ form.anticipo.label_tag }}
-                            {{ form.anticipo|add_class:"form-control" }}
-                            {% if form.anticipo.errors %}
-                                <div class="text-danger">{{ form.anticipo.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="mb-3">
-                            <label>Subtotal:</label>
-                            <input type="text" id="subtotal-general" class="form-control" readonly>
-                        </div>
-                    </div>
+                <div class="row">       
                     <div class="col-md-4">
                         <div class="mb-3">
-                            {{ form.saldo_pendiente.label_tag }}
                             {{ form.saldo_pendiente|add_class:"form-select" }}
-                            <input type="text" id="total-nuevo-saldo" class="form-control" readonly>
+                            {% comment %} <input type="text" id="total-nuevo-saldo" class="form-control" readonly> {% endcomment %}
                             {% if form.saldo_pendiente.errors %}
                                 <div class="text-danger">{{ form.saldo_pendiente.errors }}</div>
                             {% endif %}
@@ -97,18 +84,18 @@
                     </div>
                     <div class="col-md-2">
                         <div class="mb-3">
-                            {{ form.total.label_tag }}
                             {{ form.total|add_class:"form-select" }}
-                            <input type="text" id="total-general" class="form-control" readonly>
+                            {% comment %} <input type="text" id="total-general" class="form-control" readonly> {% endcomment %}
                             {% if form.total.errors %}
                                 <div class="text-danger">{{ form.total.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
+                <button type="submit" class="btn btn-success mt-3">Guardar Venta</button>
             </div>
             <div class="col-md-5">
-                <h3>Detalles de Venta</h3>
+                <h3>Detalle Productos Retornables</h3>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -123,6 +110,7 @@
                 <hr>
                 {{ formset.management_form }}
                 <table class="table table-bordered" id="detalle-venta-table">
+                    <h3>Detalle Productos No Retornables</h3>
                     <thead>
                         <tr>
                             <th>Producto</th>
@@ -151,17 +139,41 @@
                         {% endfor %}
                     </tbody>
                     <tfoot>
+                        <tr class="bg-secondary text-white">
+                            
+                            <td colspan="6" class="text-end "><strong>Deuda Anterior del Cliente: Bs.</strong></td>
+                            <td id="saldo-pendiente">0.00</td>
+                            <td></td>
+                        </tr>
                         <tr>
+                            
+                            <td colspan="6" class="text-end"><strong>Subtotal Productos Retornables: Bs.</strong></td>
+                            <td id="subtotal-general">0.00</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            
                             <td colspan="6" class="text-end"><strong>Subtotal Productos no Retornables: Bs.</strong></td>
                             <td id="total-general-no-retornable">0.00</td>
                             <td></td>
                         </tr>
+                        <tr>
+                            
+                            <td colspan="6" class="text-end"><strong>Total Venta: Bs.</strong></td>
+                            <td id="total-general">0.00</td>
+                            <td></td>
+                        </tr>
+                        <tr class="bg-warning rounded-0">
+                            
+                            <td colspan="6" class="text-end"><strong>Total Nueva Deuda del Cliente: Bs.</strong></td>
+                            <td id="total-nuevo-saldo" >0.00</td>
+                            <td></td>
+                        </tr>
+                        
                     </tfoot>
                 </table>
             </div>
         </div>
-        <br>
-        <button type="submit" class="btn btn-success mt-3">Guardar Venta</button>
     </form>
 </div>
 
@@ -169,11 +181,11 @@
 <script>
     // Variables for form elements
     const clienteSelect = document.getElementById('id_cliente');
-    const saldoPendienteInput = document.getElementById('saldo-pendiente');
-    const subtotalInput = document.getElementById('subtotal-general');
+    const saldoPendienteCell = document.getElementById('saldo-pendiente'); // Ahora es un <td>
+    const subtotalInput = document.getElementById('subtotal-general'); // Este elemento ahora será un <td>, no un <input>
     const anticipoInput = document.getElementById('id_anticipo');
-    const totalNuevoSaldoInput = document.getElementById('total-nuevo-saldo');
-    const totalGeneralInput = document.getElementById('total-general');
+    const totalNuevoSaldoCell = document.getElementById('total-nuevo-saldo'); // Ahora es un <td>
+    const totalGeneralInput = document.getElementById('total-general'); // Este elemento ahora será un <td>, no un <input>
     const saldoPendienteFormInput = document.getElementById('id_saldo_pendiente');
     const totalFormInput = document.getElementById('id_total');
     const productosTable = document.getElementById('productos-table');
@@ -181,18 +193,18 @@
 
     // Function to update totals
     function actualizarTotales() {
-        const subtotal = parseFloat(subtotalInput.value) || 0;
-        const saldoPendiente = parseFloat(saldoPendienteInput.value) || 0;
+        const subtotal = parseFloat(subtotalInput.textContent) || 0; // Usa el contenido del <td>
+        const saldoPendiente = parseFloat(saldoPendienteCell.textContent) || 0; // Usa el contenido del <td>
         const anticipo = parseFloat(anticipoInput.value) || 0;
 
         // Total Nuevo Saldo: subtotal + saldo pendiente - anticipo
         const totalNuevoSaldo = subtotal + saldoPendiente + parseFloat(totalGeneralNoRetornable.textContent) - anticipo;
-        totalNuevoSaldoInput.value = totalNuevoSaldo.toFixed(2);
+        totalNuevoSaldoCell.textContent = totalNuevoSaldo.toFixed(2); // Actualiza el contenido del <td>
         saldoPendienteFormInput.value = totalNuevoSaldo.toFixed(2);
 
         // Total General: saldo pendiente + subtotal + total_general_no_retornable
         const totalGeneral = saldoPendiente + subtotal + parseFloat(totalGeneralNoRetornable.textContent);
-        totalGeneralInput.value = totalGeneral.toFixed(2);
+        totalGeneralInput.textContent = totalGeneral.toFixed(2); // Actualiza el contenido del <td>
         totalFormInput.value = totalGeneral.toFixed(2);
     }
 
@@ -204,12 +216,13 @@
             fetch(`/ventas/saldo-cliente/${clienteId}/`)
                 .then(response => response.json())
                 .then(data => {
-                    saldoPendienteInput.value = data.saldo_pendiente || '0.00';
+                    const saldoPendiente = data.saldo_pendiente || '0.00';
+                    saldoPendienteCell.textContent = parseFloat(saldoPendiente).toFixed(2); // Actualiza el contenido del <td>
                     actualizarTotales();
                 })
                 .catch(error => console.error('Error fetching saldo pendiente:', error));
         } else {
-            saldoPendienteInput.value = '';
+            saldoPendienteCell.textContent = '0.00'; // Reinicia a 0
             actualizarTotales();
         }
     });
@@ -239,7 +252,7 @@
                 }
             });
 
-            subtotalInput.value = subtotal.toFixed(2);
+            subtotalInput.textContent = subtotal.toFixed(2); // Actualiza el contenido del <td>
             actualizarTotales();
         }
     });
@@ -296,7 +309,7 @@
 
             // Crear nueva fila
             const rowHTML = `
-            <tr class="form-row">
+            <tr class="">
                 <td>
                     <input type="hidden" name="form-${totalForms.value}-producto" value="${productoId}">
                     ${productoNombre}

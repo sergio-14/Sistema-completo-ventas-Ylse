@@ -43,7 +43,7 @@ class CustomUserAdmin(BaseUserAdmin):
         return ", ".join([group.name for group in obj.groups.all()])
     get_groups.short_description = 'Grupo'
 
-    
+from .models import RegistroDetalleVenta, RegistroVenta, ProductosiRetornable, ProductonoRetornable
 
 admin.site.register(User, CustomUserAdmin)
 
@@ -57,3 +57,7 @@ admin.site.register(TipoProducto)
 admin.site.register(GastoDiario)
 admin.site.register(Location)
 admin.site.register(DetalleVenta)
+admin.site.register(RegistroDetalleVenta)
+admin.site.register(RegistroVenta)  
+admin.site.register(ProductosiRetornable)
+admin.site.register(ProductonoRetornable)

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Lista de Ventas</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Empleado</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Saldo Pendiente</th>
+                <th>Detalles</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.cliente.negocio }}</td>
+                <td>{{ venta.empleado.nombre }}</td>
+                <td>{{ venta.fecha }}</td>
+                <td>{{ venta.total }}</td>
+                <td>{{ venta.saldo_pendiente }}</td>
+                <td>
+                    <a href="{% url 'detalle_venta' venta.id %}" class="btn btn-info btn-sm">Ver Detalles</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

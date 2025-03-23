@@ -1,4 +1,4 @@
-<div class=" text container-fluid px-5 py-2 cont-pange">
+<div class=" text container-fluid px-lg-5 px-2 py-2 cont-pange">
 
     <p class="title text-end"><strong>Detalle para:</strong> {{ venta.cliente }}</p>
     <div class="row">
@@ -14,50 +14,66 @@
         <div class="col-md-6">
             <p><strong>Anticipo:</strong> {{ venta.anticipo }} Bs.</p>
         </div>
+        <div class="col-md-6">
+            <p<strong>deuda anterior:</strong> {{ venta.deuda_anterior }} aca loco </p>
+        </div>
         
     </div>    
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Codigo</th>
-                <th>Tipo Producto</th>
-                <th>Estado</th>
-                <th>Precio Unitario</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for producto in venta.productos.all %}
-            <tr>
-                <td>{{ producto.descripcion }}</td>
-                <td>{{ producto.tipo_producto.nombre }}</td>
-                <td>{{ producto.estado }}</td>
-                <td>{{ producto.precio }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <hr>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for detalle in detalles %}
-            <tr>
-                <td>{{ detalle.producto.tipo_producto.nombre }}</td>
-                <td>{{ detalle.cantidad }}</td>
-                <td>{{ detalle.producto.precio }}</td>
-                <td>{{ detalle.subtotal }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p class="subtitle text-end py-2"><strong>Total:</strong> {{ venta.total }} Bs.</p>
-    
+    {% if venta.productos.exists %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Tipo Producto</th>
+                        <th>Estado</th>
+                        <th>Precio Unitario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in venta.productos.all %}
+                    <tr>
+                        <td data-label="Descripcion">{{ producto.descripcion }}</td>
+                        <td data-label="tipo producto">{{ producto.tipo_producto.nombre }}</td>
+                        <td data-label="estado">{{ producto.estado }}</td>
+                        <td data-label="Precio">{{ producto.precio }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            <hr>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in detalles %}
+                    <tr>
+                        <td data-label="Producto">
+                            {% if detalle.producto_no_retornable %}
+                                {{ detalle.producto_no_retornable.tipo_producto.nombre }}
+                            {% elif detalle.producto_retornable %}
+                                {{ detalle.producto_retornable.tipo_producto.nombre }}
+                            {% endif %}
+                        </td>
+                        <td data-label="cantidad">{{ detalle.cantidad }}</td>
+                        <td data-label="Precio">
+                            {% if detalle.producto_no_retornable %}
+                                {{ detalle.producto_no_retornable.precio }}
+                            {% elif detalle.producto_retornable %}
+                                {{ detalle.producto_retornable.precio }}
+                            {% endif %}
+                        </td>
+                        <td data-label="subtotal">{{ detalle.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="subtitle text-end py-2"><strong>Total:</strong> {{ venta.total }} Bs.</p>
 </div>
 

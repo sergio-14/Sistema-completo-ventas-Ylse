@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<br>
+<div class="font container-fluid p-lg-5 py-5 cont-pange">
+    <div class="row">
+        <div class="col-lg-9 col-12 order-2 order-lg-1 ">
+            <h2 class="title pb-3">Asignaciones del Negocio</h2>
+            <div class="pt-5">
+                <button class="btn btn-success btn-sm me-2 mb-lg-0 mb-2" data-bs-toggle="modal" data-bs-target="#tipoproModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+                        <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+                    </svg>
+                    Agregar Tipo Producto
+                    
+                </button>
+                
+                <button class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#rutaModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+                        <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+                      </svg>
+                    Agregar Ruta
+                    </button>
+            </div>
+        </div>
+        <div class="col-lg-3 col-12 order-1 order-lg-2 justify-content-end text-end">
+            <img src="{% static 'img/logopie.png' %}" alt="Descripción de la imagen" style="height: 160px;" class="img-fluid">
+        </div>
+    </div>
+   
+    
+    <div class="row mt-2">
+        <!-- Tipo Productos Column -->
+        <div class="col-md-6">
+            <h2 class="subtitle py-1">Tipo Productos</h2>
+            <table class="table table-striped text-center">
+                <thead class="table-color">
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in tipo_producto %}
+                    <tr>
+                        <td data-label="Producto">{{ item.nombre }}</td>
+                        <td data-label="accion">
+                            <button class="btn btn-warning  text-white btn-sm edit-btn" data-bs-toggle="modal" 
+                            data-bs-target="#tipoproModal"
+                            data-id="{{ item.id }}" 
+                            data-nombre="{{ item.nombre }}"
+                            data-form-type="tipo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                </svg>
+                                Editar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination justify-content-end px-1">
+                <span class="step-links">
+                    {% if tipo_producto.has_previous %}
+                        
+                        <a class="btn btn-secondary btn-sm" href="?tipo_producto_page={{ tipo_producto.previous_page_number }}">anterior</a>
+                    {% endif %}
+                    
+                    <span class="current">
+                        Página {{ tipo_producto.number }} de {{ tipo_producto.paginator.num_pages }}
+                    </span>
+                    
+                    {% if tipo_producto.has_next %}
+                   
+                        <a class="btn btn-secondary btn-sm" href="?tipo_producto_page={{ tipo_producto.next_page_number }}">siguiente</a>
+                        
+                    {% endif %}
+                </span>
+            </div>
+            
+        </div>
+
+        
+        <!-- División Empleados Column -->
+        <div class="col-md-6 pt-lg-0 pt-4">
+            <h2 class="subtitle py-1">Rutas Empleados</h2>
+            <table class="table table-striped text-center">
+                <thead class="table-color">
+                    <tr>
+                        <th>Nombre Ruta</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for division in division_empleados %}
+                    <tr>
+                        <td data-label="ruta">{{ division.ruta }}</td>
+                        <td data-label="accion">
+                            <button class="btn btn-warning text-white btn-sm edit-btn" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#rutaModal"
+                            data-id="{{ division.id }}" 
+                            data-nombre="{{ division.ruta }}"
+                            data-form-type="ruta">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                </svg>
+                                Editar</a>
+                        </td>
+                    </tr>
+                    
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination justify-content-end px-1">
+                <span class="step-links">
+                    {% if division_empleados.has_previous %}
+                        
+                        <a class="btn btn-secondary btn-sm" href="?division_empleado_page={{ division_empleados.previous_page_number }}">anterior</a>
+                    {% endif %}
+                    
+                    <span class="current">
+                        Página {{ division_empleados.number }} de {{ division_empleados.paginator.num_pages }}
+                    </span>
+                    
+                    {% if division_empleados.has_next %}
+                   
+                        <a class="btn btn-secondary btn-sm" href="?division_empleado_page={{ division_empleados.next_page_number }}">siguiente</a>
+                        
+                    {% endif %}
+                </span>
+            </div>
+            
+        </div>
+    </div>
+     <!-- Modal -->
+    <div class="modal fade" id="tipoproModal" tabindex="-1" aria-labelledby="tipoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color:rgb(241, 241, 241);">
+                <div class="modal-header">
+                    <h3 class="modal-title text" id="tipoLabel">Agregar/Editar Tipo Producto</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'combined_lista' %}" id="tipoProductoForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="tipo_producto">
+                        <input type="hidden" id="tipoProductoId" name="tipo_producto_id">  <!-- ID oculto -->
+                        {{ form|crispy }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-dark btn-sm">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- Modal -->
+    <div class="modal fade" id="rutaModal" tabindex="-1" aria-labelledby="rutaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color:rgb(241, 241, 241);">
+                <div class="modal-header">
+                    <h3 class="modal-title text" id="rutaLabel">Agregar/Editar Ruta</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'combined_lista' %}" id="rutaForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="ruta">
+                        <input type="hidden" id="rutaId" name="ruta_id">  <!-- ID oculto -->
+                        {{ formr|crispy }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-dark btn-sm">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".ajax-form").forEach(form => {
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+                const formData = new FormData(form);
+                fetch("{% url 'combined_lista' %}", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();  // Esto ya no es necesario
+                    }
+                })
+                .catch(error => console.error("Error en la solicitud:", error));
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                let id = this.getAttribute("data-id");
+                let nombre = this.getAttribute("data-nombre");
+                let formType = this.getAttribute("data-form-type");
+    
+                if (formType === "tipo") {
+                    document.getElementById("tipoProductoId").value = id;
+                    document.getElementById("id_nombre").value = nombre;  // Ajusta el ID según el campo de tu form
+                } else if (formType === "ruta") {
+                    document.getElementById("rutaId").value = id;
+                    document.getElementById("id_ruta").value = nombre;  // Ajusta el ID según el campo de tu form
+                }
+            });
+        });
+    });
+    </script>
+    
+
+
+{% endblock %}

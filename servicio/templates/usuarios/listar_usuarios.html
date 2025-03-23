@@ -1,30 +1,62 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <br>
-<article class="container-fluid p-5 cont-pange">
-    <h2 class="title pb-3">Lista de Usuarios</h2>
+<article class="container-fluid p-lg-5  py-5 cont-pange font ">
+    <div class="row">
+        <div class="col-lg-9 col-12 order-2 order-lg-1">
+            <h2 class="title pb-3">Lista de Usuarios</h2>
+            <div class="pt-lg-5">
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="{% url 'agregar_usuario' %}" class="btn btn-sm mb-lg-0 mb-2 btn-success">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+                                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                                <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5"/>
+                            </svg> Agregar Usuario
+                        </a>
+                    </div>
+                    <div class="col-md-8">
+                        <form method="GET" action="{% url 'listar_usuarios' %}">
+                            <div class="input-group mb-3">
+                                <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o apellido" value="{{ query }}">
+                                <button class="btn btn-success" type="submit">Buscar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-12 order-1 order-lg-2 justify-content-end text-end">
+            <img src="{% static 'img/logopie.png' %}" alt="Descripción de la imagen" style="height: 160px;" class="img-fluid">
+        </div>
+    </div>
+    
 
-<div class="text-end">
-    <a href="{% url 'agregar_usuario' %}" class="btn btn-outline-success"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
-        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-        <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5"/>
-      </svg> Agregar Usuario</a>
-</div>
-<table class="table table-striped">
-    <thead>
+
+<table class="table table-striped text-center">
+    <thead class="table-color">
         <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Tipo</th>
+            <th>Foto</th>
+            <th>Nombre Completo</th>
+            <th>Correo electronico</th>
+            <th>Rol de Sistema</th>
             <th class="text-end px-5">Acciones</th>
         </tr>
     </thead>
     <tbody>
-        {% for user in usuarios %}
+        {% for user in page_obj %}
         <tr>
-            <td>{{ user.nombre }} {{ user.apellido }}</td>
-            <td>{{ user.email }}</td>
-            <td>
+            <td data-label="Foto">
+                {% if user.imagen %}
+                    <img src="{{ user.imagen.url }}" alt="Imagen de {{ user.nombre }}" class="rounded-circle" width="40" height="40">
+                {% else %}
+                    <span>Sin imagen</span>
+                {% endif %}
+            </td>
+            <td data-label="Usuario">{{ user.nombre }} {{ user.apellido }} {{ user.apellidoM }}</td>
+            <td data-label="Email">{{ user.email }}</td>
+            <td data-label="Cargo">
                 {% if user.cliente %}
                 Cliente
                 {% elif user.empleado %}
@@ -33,25 +65,56 @@
                 N/A
                 {% endif %}
             </td>
-            <td class="text-end">
-                <a href="{% url 'editar_usuario' user.id %}" class="btn btn-outline-warning btn-sm "> 
+            <td class="text-end" data-label="">
+                <a href="{% url 'editar_usuario' user.id %}" class="btn text-white btn-warning btn-sm "> 
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                         <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                         <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                     </svg>
                     Editar
                 </a>
-                <a href="" class="btn btn-outline-danger btn-sm "> 
+                <a href="" class="btn ">
+                    
+                </a>
+                <a href="{% url 'toggle_user_status' user.id %}" class="btn {% if user.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %} btn-sm "> 
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-x" viewBox="0 0 16 16">
                         <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m.256 7a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
                         <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708"/>
                     </svg>
-                    Desactivar
+                    {% if user.is_active %}Desactivar{% else %}Habilitar{% endif %}
+                    
                 </a>
             </td>
         </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No se encontraron usuarios</td>
+            </tr>
         {% endfor %}
+        
     </tbody>
 </table>
+<!-- PAGINACIÓN -->
+<nav>
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+           
+            <li class="page-item">
+                <a class=" btn btn-secondary btn-sm" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+            <span class="btn btn-sm">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class=" btn btn-secondary btn-sm" href="?q={{ query }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+            </li>
+           
+        {% endif %}
+    </ul>
+</nav>
 </article>
 {% endblock %}

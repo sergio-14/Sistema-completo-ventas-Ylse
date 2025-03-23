@@ -1,0 +1,40 @@
+/* Estilo responsivo para pantallas pequeñas */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+    .title{
+        font-size: 30px;
+    }
+
+    /* Oculta los encabezados en pantallas pequeñas */
+    thead {
+        display: none;
+    }
+
+    /* Cada fila se convierte en un bloque */
+    tr {
+        margin-bottom: 15px;
+        border-bottom: 2px solid #ddd;
+        padding: 10px;
+    }
+
+    /* Muestra el th antes del td */
+    td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+    }
+
+    /* Estilo para los títulos (th simulados) */
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #555;
+    }
+}

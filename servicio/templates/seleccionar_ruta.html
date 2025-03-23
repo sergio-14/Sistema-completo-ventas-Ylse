@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Seleccionar Rutas</title>
+</head>
+<body>
+    <h1>Seleccionar Rutas</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Calcular Rutas</button>
+    </form>
+
+    {% if ruta_ordenada %}
+        <h2>Ruta Optimizada</h2>
+        <ul>
+            {% for loc in ruta_ordenada %}
+                <li>{{ loc.cliente.negocio }} - {{ loc.latitude }}, {{ loc.longitude }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
