@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br>
+<article class="container-fluid p-lg-5 py-5 cont-pange font ">
+    <h2 class="title">Editar Cliente: </h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="mb-3 col-lg-6 col-12">
+                <label class="form-label">Negocio</label>
+                {{ form.negocio }}
+            </div>
+            <div class="mb-3 col-lg-6 col-12">
+                <label class="form-label">Contacto</label>
+                {{ form.contacto }}
+            </div>
+        </div>
+            
+        <div class="mb-3">
+            <label class="form-label">Imagen</label>
+            {{ form.imagen }}
+        </div>
+        <button type="submit" class="btn btn-dark btn-sm me-2">Guardar Cambios</button>
+        <a href="{% url 'lista_clientes' %}" class="btn btn-outline-secondary btn-sm">Cancelar</a>
+    </form>
+</article>
+{% endblock %}
