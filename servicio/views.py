@@ -353,14 +353,37 @@ from datetime import datetime
 import pytz
 
 # Listar ventas
+import pytz
+from django.utils import timezone
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import RegistroVenta, GastoDiario
+
+@login_required
 def venta_list(request):
-    # Obtener la fecha actual en la zona horaria local
+    # Obtener la fecha de hoy en América/La_Paz
     la_paz_tz = pytz.timezone('America/La_Paz')
     hoy = timezone.now().astimezone(la_paz_tz).date()
 
-    # Filtrar ventas y gastos solo del día actual
-    ventas = RegistroVenta.objects.filter(fecha__date=hoy).order_by('-fecha') 
-    gastos = GastoDiario.objects.filter(fecha=hoy).order_by('-fecha') 
+    # Intentar obtener el objeto Empleado asociado al usuario
+    try:
+        empleado = request.user.empleado
+    except Empleado.DoesNotExist:
+        # Si el usuario no es un empleado, redirige o muestra un mensaje
+        return redirect('home')  # o render(request, 'no_es_empleado.html')
+
+    # Filtrar ventas y gastos solo del día y de este empleado
+    ventas = RegistroVenta.objects.filter(
+        empleado=empleado,
+        fecha__date=hoy
+    ).order_by('-fecha')
+
+    # Si tu modelo GastoDiario también tiene referencia a Empleado:
+    gastos = GastoDiario.objects.filter(
+        empleado=empleado,
+        fecha=hoy
+    ).order_by('-fecha')
+    # Si GastoDiario NO está ligado al empleado, quita el filtro empleado=empleado.
 
     # Cálculos de totales
     total_general = sum(venta.total for venta in ventas)
@@ -369,6 +392,9 @@ def venta_list(request):
     total_ganancias = total_anticipo - monto_total_gastos
 
     context = {
+        'empleado': empleado,
+        'division': empleado.division,
+        'ruta': empleado.division.ruta,
         'ventas': ventas,
         'gastos': gastos,
         'total_general': total_general,
@@ -1197,9 +1223,16 @@ class RegistrarVentaView(View):
     def get(self, request, *args, **kwargs):
         form = RegistroVentaForm()
 
-        # Solo mostrar productos retornables disponibles (estado "Disponible")
+        # Obtener empleado
+        try:
+            empleado = request.user.empleado
+        except ObjectDoesNotExist:
+            return redirect('home')  # O muestra un template de error
+
+        # No retornables: todos
         productos_no_retornables = ProductonoRetornable.objects.all()
-        productos_retornables = ProductosiRetornable.objects.filter(estado='Disponible')
+        # Retornables: solo los asignados y disponibles
+        productos_retornables = empleado.productosasignados.filter(estado='Disponible')
 
         return render(request, 'ventas/registrar_venta.html', {
             'form': form,
@@ -1216,14 +1249,16 @@ class RegistrarVentaView(View):
             saldo_value = form.cleaned_data['saldo_pendiente']
             deuda_value = form.cleaned_data['deuda_anterior']
 
+            # Obtener empleado
             try:
-                empleado = Empleado.objects.get(usuario=request.user)
+                empleado = request.user.empleado
             except ObjectDoesNotExist:
                 return render(request, 'ventas/registrar_venta.html', {
                     'form': form,
                     'error': 'Empleado no encontrado para el usuario actual.'
                 })
 
+            # Listas para almacenar selecciones
             productos_no_retornables = []
             cantidades_no_retornables = []
             productos_retornables = []
@@ -1237,8 +1272,9 @@ class RegistrarVentaView(View):
                         productos_no_retornables.append(producto)
                         cantidades_no_retornables.append(cantidad)
 
-            # Procesar productos retornables seleccionados (solo los disponibles)
-            for producto in ProductosiRetornable.objects.filter(estado='Disponible'):
+            # Procesar productos retornables asignados y disponibles
+            asignados = empleado.productosasignados.filter(estado='Disponible')
+            for producto in asignados:
                 if form.cleaned_data.get(f'producto_retornable_{producto.id}'):
                     cantidad = form.cleaned_data.get(f'cantidad_retornable_{producto.id}', 0)
                     if cantidad > 0:
@@ -1261,7 +1297,7 @@ class RegistrarVentaView(View):
                 deuda_anterior=deuda_value
             )
 
-            # Registrar los detalles de la venta y ajustar stocks y estados
+            # Detalles no retornables
             for i, producto in enumerate(productos_no_retornables):
                 cantidad = cantidades_no_retornables[i]
                 subtotal = producto.precio * cantidad
@@ -1273,11 +1309,11 @@ class RegistrarVentaView(View):
                     subtotal=subtotal
                 )
 
+            # Detalles retornables (marcar como Ocupado)
             for i, producto in enumerate(productos_retornables):
                 cantidad = cantidades_retornables[i]
                 subtotal = producto.precio * cantidad
 
-                # Cambiar estado del producto retornable a "Ocupado"
                 producto.estado = 'Ocupado'
                 producto.save()
 
@@ -1291,7 +1327,20 @@ class RegistrarVentaView(View):
 
             return redirect('venta_list')
 
-        return render(request, 'ventas/registrar_venta.html', {'form': form})
+        # Si el form no es válido, recargar los productos para el template
+        try:
+            empleado = request.user.empleado
+            productos_no_retornables = ProductonoRetornable.objects.all()
+            productos_retornables = empleado.productosasignados.filter(estado='Disponible')
+        except ObjectDoesNotExist:
+            productos_no_retornables = ProductonoRetornable.objects.none()
+            productos_retornables = ProductosiRetornable.objects.none()
+
+        return render(request, 'ventas/registrar_venta.html', {
+            'form': form,
+            'productos_no_retornables': productos_no_retornables,
+            'productos_retornables': productos_retornables
+        })
 
 
 

@@ -27,9 +27,11 @@
                             <path d="m8 3.293 4.712 4.712A4.5 4.5 0 0 0 8.758 15H3.5A1.5 1.5 0 0 1 2 13.5V9.293z"/>
                             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.707l.547.547 1.17-1.951a.5.5 0 1 1 .858.514"/>
                         </svg>
-                        Dashboard</a>
+                        Dashboard
+                    </a>
 
                 </li>
+                {% if request.user.is_superuser %}
                 <li class="nav-item my-2">
                     <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenuUsuarios" aria-expanded="false" aria-controls="submenuUsuarios">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-circle ms-2 me-1 mb-1" viewBox="0 0 16 16">
@@ -71,6 +73,7 @@
                         </ul>
                     </div>
                 </li>
+
                 <li class="nav-item my-2">
                     <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenuServicios" aria-expanded="false" aria-controls="submenuServicios">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="ms-2 me-1 mb-1bi bi-stack" viewBox="0 0 16 16">
@@ -112,6 +115,7 @@
                         </ul>
                     </div>
                 </li>
+                {% endif %}
                 <li class="nav-item my-2">
                     <a class="nav-link" href="{% url 'venta_list' %}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-check-fill  ms-2  me-1 mb-1" viewBox="0 0 16 16">
@@ -120,7 +124,7 @@
                         Registro Ventas
                     </a>
                 </li>
-                
+                {% if request.user.is_superuser %}
                 <li class="nav-item my-2">
                     <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenureporte" aria-expanded="false" aria-controls="submenureporte">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-stack-overflow ms-2  me-1 mb-1" viewBox="0 0 16 16">
@@ -162,6 +166,7 @@
                         </ul>
                     </div>
                 </li>
+                {% endif %}
                 <li class="nav-item my-2">
                     <a class="nav-link" href="{% url 'mapas' %} " >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-geo-fill ms-2  me-1 mb-1" viewBox="0 0 16 16">

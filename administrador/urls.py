@@ -69,13 +69,9 @@ urlpatterns = [
 
     path('ventas/list', views.venta_list, name='venta_list'),
     path('ventasreporte/listrepo', views.venta_listrepo, name='venta_listrepo'),
-    #path('clientes/<int:cliente_id>/saldo/', views.obtener_saldo_pendiente, name='obtener_saldo_pendiente'),
-    #path('get_saldo_cliente/<int:cliente_id>/', views.get_saldo_cliente, name='get_saldo_cliente'),
-    
-    
-    #path('ventas/nueva/', VentaCreateView.as_view(), name='venta_create'),
+
     path('ventas/<int:pk>/', VentaDetailView.as_view(), name='venta_detail'),
-    #path('ventas/nueva/', views.crear_venta, name='venta_create'),
+
     path('venta/<int:venta_id>/', views.detalle_venta, name='detalle_venta'),
     
     #login
