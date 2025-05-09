@@ -156,7 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-#ALLOWED_HOSTS = ['localhost','web-production-3dfda.up.railway.app']
+ALLOWED_HOSTS = ['localhost','web-production-3dfda.up.railway.app']
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 CSRF_TRUSTED_ORIGINS = ['http://*','https://web-production-3dfda.up.railway.app']
