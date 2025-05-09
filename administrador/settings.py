@@ -11,7 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
     'servicio',
     'widget_tweaks',
     'crispy_forms',
@@ -49,6 +54,7 @@ AUTH_USER_MODEL = 'servicio.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,13 +87,15 @@ WSGI_APPLICATION = 'administrador.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}"""
+DATABASES = {
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
-
 
 LOGIN_URL = 'login'  # Ruta al login
 LOGIN_REDIRECT_URL = 'dashboard'  # Ruta tras iniciar sesión
@@ -128,12 +136,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = BASE_DIR,'servicio/static'
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'servicio/static',
+]
 
+import os
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR/'media'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -143,3 +157,6 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 ALLOWED_HOSTS = ['localhost','web-production-3dfda.up.railway.app']
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+CSRF_TRUSTED_ORIGINS = ['http://*','https://web-production-3dfda.up.railway.app']
